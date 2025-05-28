@@ -1,15 +1,11 @@
 <?php
+declare(strict_types=1);
 
-use App\Http\Controllers\LandingController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [LandingController::class, 'index'])->name('landing');
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/sign-in', fn() => view('auth/sign-in'))->name('sign-in');
+Route::get('/sign-up', fn() => view('auth/sign-up'))->name('sign-up');
 
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/dashboard', fn() => view('dashboard'))->name('dashboard');

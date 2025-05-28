@@ -2,7 +2,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: docker/php82/Dockerfile
     container_name: rebalax-app
     restart: unless-stopped
     working_dir: /var/www/
@@ -20,6 +20,18 @@ services:
     volumes:
       - ./:/var/www
       - ./docker/nginx/conf.d:/etc/nginx/conf.d/
+    networks:
+      - rebalax
+
+  node:
+    image: node:20-alpine
+    container_name: rebalax-node
+    working_dir: /var/www
+    volumes:
+      - ./tailadmin-src/:/var/www
+    ports:
+      - "3000:3000"
+    command: sh -c "npm install && npm run start"
     networks:
       - rebalax
 
@@ -43,4 +55,4 @@ networks:
     driver: bridge
 
 volumes:
-  dbdata: 
+  dbdata:
