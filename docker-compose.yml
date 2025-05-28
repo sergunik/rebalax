@@ -28,7 +28,7 @@ services:
     container_name: rebalax-node
     working_dir: /var/www
     volumes:
-      - ./tailadmin-src/:/var/www
+      - ./tailadmin/:/var/www
     ports:
       - "3000:3000"
     command: sh -c "npm install && npm run start"
