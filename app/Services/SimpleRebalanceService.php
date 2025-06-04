@@ -8,7 +8,7 @@ use InvalidArgumentException;
 
 class SimpleRebalanceService
 {
-    private const TARGET_ALLOCATION = 0.5; // 50%
+    public const TARGET_ALLOCATION = 0.5; // 50%
 
     /**
      * Determines if rebalancing is needed based on current allocation deviation
@@ -58,8 +58,8 @@ class SimpleRebalanceService
         $amountToBuy = $valueToTrade / $prices[$buyCoin];
 
         return [
-            'sell' => [$sellCoin => $amountToSell],
-            'buy' => [$buyCoin => $amountToBuy]
+            $sellCoin => ['sell' => $amountToSell],
+            $buyCoin => ['buy' => $amountToBuy]
         ];
     }
 

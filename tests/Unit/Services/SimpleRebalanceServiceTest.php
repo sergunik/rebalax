@@ -54,8 +54,8 @@ class SimpleRebalanceServiceTest extends TestCase
         $expectedSellBtc = 15000 / 50000; // 0.3 BTC
         $expectedBuyEth = 15000 / 2000;   // 7.5 ETH
 
-        $this->assertEqualsWithDelta($expectedSellBtc, $result['sell']['BTC'], 0.0001);
-        $this->assertEqualsWithDelta($expectedBuyEth, $result['buy']['ETH'], 0.0001);
+        $this->assertEqualsWithDelta($expectedSellBtc, $result['BTC']['sell'], 0.0001);
+        $this->assertEqualsWithDelta($expectedBuyEth, $result['ETH']['buy'], 0.0001);
     }
 
     public function test_it_handles_balanced_portfolio(): void

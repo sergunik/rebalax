@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use App\Models\Balance;
 use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder
+class BalanceSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->call(BalanceSeeder::class);
+        Balance::factory()->count(1)->create();
     }
 }
