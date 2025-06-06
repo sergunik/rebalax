@@ -23,6 +23,7 @@ class DryRunSimpleRebalanceTest extends TestCase
     private array $coinBPrices = [];
     private Balance $coinABalance;
     private Balance $coinBBalance;
+    private array $rebalanceLog = [];
 
     protected function setUp(): void
     {
@@ -32,7 +33,6 @@ class DryRunSimpleRebalanceTest extends TestCase
         $this->rebalanceService = app()->make(SimpleRebalanceService::class);
 
         $this->loadPrices();
-        $this->create_balances();
     }
 
     private function loadPrices():void
@@ -50,26 +50,22 @@ class DryRunSimpleRebalanceTest extends TestCase
     private function create_balances(): void
     {
         $initialBalance = 1000; //1k usdt
-        $coinUSDTBalance = $this->balanceRepository->create('USDT', 1000);
 
         $targetAllocation = SimpleRebalanceService::TARGET_ALLOCATION; // 50% allocation for each coin
 
         $coinAAmount = $initialBalance * $targetAllocation / $this->coinAPrices[0];
         $this->coinABalance = $this->balanceRepository->create('CoinA', $coinAAmount);
-        Log::info("CoinA initial balance: {$this->coinABalance->amount}");
+        $this->rebalanceLog['coinAInitBalance'] = $coinAAmount;
 
         $coinBAmount = $initialBalance * $targetAllocation / $this->coinBPrices[0];
         $this->coinBBalance = $this->balanceRepository->create('CoinB', $coinBAmount);
-        Log::info("CoinB initial balance: {$this->coinBBalance->amount}");
-
-        $coinUSDTBalance->amount = 0;
-        $coinUSDTBalance->save();
-
-        self::assertSame(0, $this->balanceRepository->findByToken('USDT')->amount);
+        $this->rebalanceLog['coinBInitBalance'] = $coinBAmount;
     }
 
-    public function testRebalance(): void
+    private function doRebalance(float $threshold): void
     {
+        $this->rebalanceLog['rebalanceIterator'] = 0;
+
         // run loop for each price point
         for ($priceIndex = 0; $priceIndex < count($this->coinAPrices); $priceIndex++) {
             $coinAPrice = (float)$this->coinAPrices[$priceIndex];
@@ -85,7 +81,7 @@ class DryRunSimpleRebalanceTest extends TestCase
                     'CoinA' => $coinAPrice,
                     'CoinB' => $coinBPrice
                 ],
-                0.07 // 7% deviation threshold
+                $threshold
             );
 
             // if needed, call rebalance service
@@ -100,7 +96,6 @@ class DryRunSimpleRebalanceTest extends TestCase
                         'CoinB' => $coinBPrice
                     ]
                 );
-                Log::info("Rebalance needed at index $priceIndex: " . json_encode($rebalanceResult));
 
                 // Update balances based on rebalance result
                 if (isset($rebalanceResult['CoinA']['buy'])) {
@@ -124,13 +119,32 @@ class DryRunSimpleRebalanceTest extends TestCase
                 $this->coinBBalance->save();
 
                 // log the results
-                Log::info("Rebalanced: CoinA - {$this->coinABalance->amount}, CoinB - {$this->coinBBalance->amount}");
+                $this->rebalanceLog['rebalanceIterator']++;
+//                Log::info("Rebalanced: CoinA - {$this->coinABalance->amount}, CoinB - {$this->coinBBalance->amount}");
             }
         }
 
         // return the final balances with last prices and total value
-        Log::info("Final Balances:");
-        Log::info("CoinA: {$this->coinABalance->amount}, CoinB: {$this->coinBBalance->amount}");
-        Log::info("Total Value: " . ($this->coinABalance->amount * $coinAPrice) + ($this->coinBBalance->amount * $coinBPrice));
+        $this->rebalanceLog['finalCoinABalance'] = $this->coinABalance->amount;
+        $this->rebalanceLog['finalCoinBBalance'] = $this->coinBBalance->amount;
+        $this->rebalanceLog['diffCoinA'] = $this->rebalanceLog['finalCoinABalance'] - $this->rebalanceLog['coinAInitBalance'];
+        $this->rebalanceLog['diffCoinB'] = $this->rebalanceLog['finalCoinBBalance'] - $this->rebalanceLog['coinBInitBalance'];
+        Log::info("Threshold: $threshold;
+            Iterations: {$this->rebalanceLog['rebalanceIterator']}
+            Difference CoinA: " . number_format($this->rebalanceLog['diffCoinA'], 8) . "
+            Difference CoinB: " . number_format($this->rebalanceLog['diffCoinB'], 8) . "
+            Total diff value: " . number_format(
+                $this->rebalanceLog['diffCoinA'] * $coinAPrice +
+                $this->rebalanceLog['diffCoinB'] * $coinBPrice, 2) . ";");
+    }
+
+    public function testRebalance(): void
+    {
+        $thresholds = range(0.03, 0.085, 0.005);
+        foreach ($thresholds as $threshold) {
+            $this->rebalanceLog = [];
+            $this->create_balances();
+            $this->doRebalance($threshold);
+        }
     }
 }
