@@ -17,13 +17,32 @@ It supports trading via centralized exchange APIs (e.g. Binance), converting ass
     git clone https://github.com/your-username/your-repo.git
     cd your-repo
     ```
+    
+1. Run docker compose to start the application:
+    ```bash
+    docker compose up -d
+    ```
 
-2.  **Install dependencies:**
+    This will start the application in detached mode. You can check the logs with:
+    ```bash
+    docker compose logs -f
+    ```
+
+    To stop the application, run:
+    ```bash
+    docker compose down
+    ```
+    Go inside the container to run commands:
+    ```bash
+    docker compose exec app bash
+    ```
+
+1. **Install dependencies:**
     ```bash
     composer install
     ```
 
-3.  **Set up environment:**
+4. **Set up environment:**
 
     -   Copy `.env.example` to `.env` and configure your database and other environment variables.
     -   Generate application key:
@@ -31,7 +50,7 @@ It supports trading via centralized exchange APIs (e.g. Binance), converting ass
         php artisan key:generate
         ```
 
-4.  **Database setup:**
+5. **Database setup:**
 
     -   Run database migrations:
         ```bash

@@ -12,50 +12,24 @@
         </p>
     </div>
     <div>
-        <form method="POST" action="{{ route('sign-up') }}">
+        <form method="POST" action="{{ route('register') }}">
             @csrf
             <div class="space-y-5">
-                <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                    <!-- First Name -->
+                <div>
                     <div class="sm:col-span-1">
-                        <label
-                            class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-                        >
-                            First Name<span class="text-error-500">*</span>
-                        </label>
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Name<span class="text-error-500">*</span></label>
                         <input
                             type="text"
-                            id="fname"
-                            name="fname"
+                            id="name"
+                            name="name"
                             placeholder="Enter your first name"
-                            value="{{ old('fname') }}"
-                            class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                        />
-                    </div>
-                    <!-- Last Name -->
-                    <div class="sm:col-span-1">
-                        <label
-                            class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-                        >
-                            Last Name<span class="text-error-500">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="lname"
-                            name="lname"
-                            placeholder="Enter your last name"
-                            value="{{ old('lname') }}"
+                            value="{{ old('name') }}"
                             class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                         />
                     </div>
                 </div>
-                <!-- Email -->
                 <div>
-                    <label
-                        class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-                    >
-                        Email<span class="text-error-500">*</span>
-                    </label>
+                    <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Email<span class="text-error-500">*</span></label>
                     <input
                         type="email"
                         id="email"
@@ -65,16 +39,13 @@
                         class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                     />
                 </div>
-                <!-- Password -->
                 <div>
-                    <label
-                        class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-                    >
-                        Password<span class="text-error-500">*</span>
-                    </label>
+                    <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Password<span class="text-error-500">*</span></label>
                     <div x-data="{ showPassword: false }" class="relative">
                         <input
                             :type="showPassword ? 'text' : 'password'"
+                            id="password"
+                            name="password"
                             placeholder="Enter your password"
                             class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-4 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                         />
