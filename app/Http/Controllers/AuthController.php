@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateUserRequest;
@@ -20,7 +22,7 @@ class AuthController extends Controller
             password: $request->input('password')
         ));
 
-        return redirect()->route('sign-in')->with('status', 'Registration successful. Please log in.');
+        return redirect()->route('login')->with('status', 'Registration successful. Please log in.');
     }
 
     public function login(LoginRequest $request): RedirectResponse
@@ -37,7 +39,7 @@ class AuthController extends Controller
         ]);
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
         $request->session()->invalidate();

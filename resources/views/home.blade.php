@@ -16,10 +16,10 @@
                             Перейти до дашборду
                         </a>
                     @else
-                        <a href="{{ route('sign-in') }}" class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                        <a href="{{ route('login') }}" class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
                             Увійти
                         </a>
-                        <a href="{{ route('sign-up') }}" class="text-sm font-semibold leading-6 text-gray-900">
+                        <a href="{{ route('register') }}" class="text-sm font-semibold leading-6 text-gray-900">
                             Зареєструватися <span aria-hidden="true">→</span>
                         </a>
                     @endauth

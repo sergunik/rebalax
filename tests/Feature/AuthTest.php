@@ -18,16 +18,16 @@ class AuthTest extends TestCase
 
     public function test_guest_can_see_sign_in_page()
     {
-        $response = $this->get(route('sign-in'));
+        $response = $this->get(route('login'));
         $response->assertStatus(200)
-            ->assertViewIs('auth.sign-in');
+            ->assertViewIs('auth.login');
     }
 
     public function test_guest_can_see_sign_up_page()
     {
-        $response = $this->get(route('sign-up'));
+        $response = $this->get(route('register'));
         $response->assertStatus(200)
-            ->assertViewIs('auth.sign-up');
+            ->assertViewIs('auth.register');
     }
 
     public function test_guest_can_register()
@@ -39,7 +39,7 @@ class AuthTest extends TestCase
             'password_confirmation' => 'secret123',
         ]);
 
-        $response->assertRedirect(route('sign-in'));
+        $response->assertRedirect(route('login'));
 
         $this->assertDatabaseHas('users', ['email' => 'test@example.com']);
     }
@@ -76,19 +76,19 @@ class AuthTest extends TestCase
         $this->assertGuest();
     }
 
-//    public function test_guest_is_redirected_from_dashboard()
-//    {
-//        $response = $this->get(route('dashboard'));
-//        $response->assertRedirect(route('sign-in')); // Adjust if you use a different redirect
-//    }
-//
-//    public function test_authenticated_user_can_see_dashboard()
-//    {
-//        $user = User::factory()->create();
-//
-//        $response = $this->actingAs($user)->get(route('dashboard'));
-//
-//        $response->assertStatus(200);
-//        // Optionally: $response->assertViewIs('dashboard.index');
-//    }
+    public function test_guest_is_redirected_from_dashboard()
+    {
+        $response = $this->get(route('dashboard'));
+        $response->assertRedirect(route('login'));
+    }
+
+    public function test_authenticated_user_can_see_dashboard()
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get(route('dashboard'));
+
+        $response->assertStatus(200);
+        $response->assertViewIs('dashboard.index');
+    }
 }

@@ -156,7 +156,7 @@
             >
                 Already have an account?
                 <a
-                    href="{{ route('sign-in') }}"
+                    href="{{ route('login') }}"
                     class="text-brand-500 hover:text-brand-600 dark:text-brand-400"
                 >Sign In</a
                 >
