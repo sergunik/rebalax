@@ -7,9 +7,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\LoginRequest;
 use App\Jobs\User\CreateUserJob;
+use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
