@@ -14,13 +14,14 @@ class CreatePortfolioJob implements ShouldQueue
     use Queueable;
 
     public function __construct(
-        public readonly int                $userId,
-        public readonly string             $name,
-        public readonly string             $description = '',
-        public readonly bool               $isActive = false,
-        public readonly float              $rebalanceThresholdPercent,
+        public readonly int $userId,
+        public readonly string $name = '',
+        public readonly string $description = '',
+        public readonly bool $isActive = false,
+        public readonly float $rebalanceThresholdPercent = 7.5,
         public readonly ?DateTimeInterface $lastRebalancedAt = null,
-    ) {}
+    ) {
+    }
 
     public function handle(): void
     {
