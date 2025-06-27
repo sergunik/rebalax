@@ -25,13 +25,13 @@ class CreatePortfolioJob implements ShouldQueue
 
     public function handle(): void
     {
-        $portfolio = new Portfolio();
-        $portfolio->user_id = $this->userId;
-        $portfolio->name = $this->name;
-        $portfolio->description = $this->description;
-        $portfolio->is_active = $this->isActive;
-        $portfolio->rebalance_threshold_percent = $this->rebalanceThresholdPercent;
-        $portfolio->last_rebalanced_at = $this->lastRebalancedAt;
-        $portfolio->save();
+        Portfolio::create([
+            'user_id' => $this->userId,
+            'name' => $this->name,
+            'description' => $this->description,
+            'is_active' => $this->isActive,
+            'rebalance_threshold_percent' => $this->rebalanceThresholdPercent,
+            'last_rebalanced_at' => $this->lastRebalancedAt,
+        ]);
     }
 }

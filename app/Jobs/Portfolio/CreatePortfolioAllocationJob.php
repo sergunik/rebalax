@@ -19,10 +19,10 @@ class CreatePortfolioAllocationJob implements ShouldQueue
 
     public function handle(): void
     {
-        $portfolioAllocation = new PortfolioAllocation();
-        $portfolioAllocation->portfolio_id = $this->portfolioId;
-        $portfolioAllocation->token_symbol = $this->tokenSymbol;
-        $portfolioAllocation->target_allocation_percent = $this->targetAllocationPercent;
-        $portfolioAllocation->save();
+        PortfolioAllocation::create([
+            'portfolio_id' => $this->portfolioId,
+            'token_symbol' => $this->tokenSymbol,
+            'target_allocation_percent' => $this->targetAllocationPercent,
+        ]);
     }
 }

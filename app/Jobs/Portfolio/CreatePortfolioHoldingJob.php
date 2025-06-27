@@ -22,12 +22,16 @@ class CreatePortfolioHoldingJob implements ShouldQueue
 
     public function handle(): void
     {
-        $portfolioHolding = new PortfolioHolding();
-        $portfolioHolding->portfolio_id = $this->portfolioId;
-        $portfolioHolding->user_id = $this->userId;
-        $portfolioHolding->token_symbol = $this->tokenSymbol;
-        $portfolioHolding->quantity = $this->quantity;
-        $portfolioHolding->last_updated_at = $this->lastUpdatedAt;
-        $portfolioHolding->save();
+        PortfolioHolding::updateOrCreate(
+            [
+                'portfolio_id' => $this->portfolioId,
+                'user_id' => $this->userId,
+                'token_symbol' => $this->tokenSymbol,
+            ],
+            [
+                'quantity' => $this->quantity,
+                'last_updated_at' => $this->lastUpdatedAt,
+            ]
+        );
     }
 }
