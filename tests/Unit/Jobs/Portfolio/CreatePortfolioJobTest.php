@@ -4,6 +4,7 @@ namespace Tests\Unit\Jobs\Portfolio;
 
 use App\Jobs\Portfolio\CreatePortfolioJob;
 use App\Models\User;
+use Generator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -47,8 +48,6 @@ class CreatePortfolioJobTest  extends TestCase
     public function test_handle_creates_portfolio($portfolioData)
     {
         // Arrange
-        $user = User::factory()->create();
-
         $job = new CreatePortfolioJob(
             $this->user->id,
             $portfolioData['name'],
@@ -71,7 +70,7 @@ class CreatePortfolioJobTest  extends TestCase
         ]);
     }
 
-    public static function portfolioDataProvider(): \Generator
+    public static function portfolioDataProvider(): Generator
     {
         yield 'basic portfolio' => [[
             'user_id' => null,

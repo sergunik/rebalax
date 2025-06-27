@@ -20,8 +20,6 @@ class Portfolio extends Model
         'is_active',
         'rebalance_threshold_percent',
         'last_rebalanced_at',
-        'created_at',
-        'updated_at',
     ];
 
     protected $casts = [
