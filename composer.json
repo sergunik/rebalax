@@ -18,7 +18,9 @@
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
+        "php-parallel-lint/php-parallel-lint": "^1.4",
         "phpunit/phpunit": "^11.5.3",
+        "slevomat/coding-standard": "^8.19",
         "squizlabs/php_codesniffer": "^3.13"
     },
     "autoload": {
@@ -56,7 +58,9 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test"
-        ]
+        ],
+        "lint": "vendor/bin/phpcs --standard=ruleset.xml app/",
+        "lint-fix": "vendor/bin/phpcbf --standard=ruleset.xml app/"
     },
     "extra": {
         "laravel": {
@@ -68,6 +72,7 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
         }
