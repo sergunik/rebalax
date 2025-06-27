@@ -11,9 +11,6 @@
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
         </testsuite>
-        <testsuite name="Playground">
-            <directory>tests/Playground</directory>
-        </testsuite>
     </testsuites>
     <source>
         <include>
