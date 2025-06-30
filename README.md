@@ -83,7 +83,7 @@ This project uses [PHP\_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffe
 
 -   To run the linter:
     ```bash
-    vendor/bin/phpcs --standard=PSR12 app/
+    composer lint
     ```
     
 ## License

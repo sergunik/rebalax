@@ -10,10 +10,13 @@ class TokenPrice extends Model
 {
     protected $fillable = [
         'symbol',
+        'pair',
         'price_usd',
+        'fetched_at',
     ];
 
     protected $casts = [
         'price_usd' => 'decimal:8',
+        'fetched_at' => 'datetime',
     ];
 }

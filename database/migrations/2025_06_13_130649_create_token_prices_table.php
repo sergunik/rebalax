@@ -13,12 +13,11 @@ return new class extends Migration
         Schema::create('token_prices', function (Blueprint $table) {
             $table->id();
             $table->string('symbol', 20);
+            $table->string('pair', 20);
             $table->decimal('price_usd', 16, 8);
-            $table->timestamps();
+            $table->timestamp('fetched_at')->useCurrent();
 
-//            // For fast price lookups during rebalancing
-//            $table->unique(['symbol', 'fetched_at']);
-//            $table->index(['symbol', 'fetched_at']);
+            $table->index(['symbol', 'fetched_at']);
         });
     }
 
