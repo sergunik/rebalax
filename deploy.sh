@@ -2,6 +2,9 @@
 
 set -e
 
+pwd
+cd ~/rebalax
+
 cp .env.example .env
 
 [ -n "$APP_KEY" ] && sed -i "s|^APP_KEY=.*|APP_KEY=$APP_KEY|" .env
