@@ -22,16 +22,6 @@ jobs:
           target: "~/rebalax-temp"
           rm: true
 
-      - name: Upload config files explicitly
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_KEY }}
-          source: |
-            .env.example
-          target: "~/rebalax-temp"
-
       - name: Run remote deployment script
         uses: appleboy/ssh-action@v0.1.10
         with:

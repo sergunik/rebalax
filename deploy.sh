@@ -8,8 +8,8 @@ RELEASE_DIR=$DEPLOY_BASE/releases/release_$TIMESTAMP
 CURRENT=$DEPLOY_BASE/current
 
 mkdir -p "$RELEASE_DIR"
-cp -R ~/rebalax-temp/* "$RELEASE_DIR"
-#rm -rf ~/rebalax-temp
+cp -r ~/rebalax-temp/. "$RELEASE_DIR"
+rm -rf ~/rebalax-temp
 
 cd "$RELEASE_DIR"
 
