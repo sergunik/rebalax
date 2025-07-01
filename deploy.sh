@@ -13,8 +13,8 @@ rm -rf ~/rebalax-temp
 
 cd "$RELEASE_DIR"
 
-docker compose -f docker-compose.prod.yml build
-docker compose -f docker-compose.prod.yml up -d
+docker-compose -f docker-compose.prod.yml build
+docker-compose -f docker-compose.prod.yml up -d
 
 sleep 10
 curl -f http://localhost:8000 > /dev/null
@@ -30,7 +30,7 @@ ln -sfn "$RELEASE_DIR" "$CURRENT"
 cd "$DEPLOY_BASE/releases"
 ls -dt release_* | tail -n +6 | while read dir; do
     cd "$DEPLOY_BASE/releases/$dir"
-    docker compose -f docker-compose.prod.yml down -v
+    docker-compose -f docker-compose.prod.yml down -v
     rm -rf "$DEPLOY_BASE/releases/$dir"
 done
 
