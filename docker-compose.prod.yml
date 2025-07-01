@@ -1,0 +1,46 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php82/Dockerfile
+    container_name: rebalax-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+    networks:
+      - rebalax
+
+  nginx:
+    image: nginx:alpine
+    container_name: rebalax-nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d/
+    networks:
+      - rebalax
+
+  db:
+    image: postgres:15-alpine
+    container_name: rebalax-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: rebalax
+      POSTGRES_USER: rebalax
+      POSTGRES_PASSWORD: rebalax
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - rebalax
+
+networks:
+  rebalax:
+    driver: bridge
+
+volumes:
+  dbdata:
