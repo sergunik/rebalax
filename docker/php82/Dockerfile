@@ -24,4 +24,5 @@ RUN git config --global --add safe.directory /var/www
 
 COPY docker/crontab/laravel /etc/cron.d/laravel
 RUN chmod 0644 /etc/cron.d/laravel
-CMD cron && php-fpm
+RUN service cron start
+
