@@ -18,4 +18,5 @@ WORKDIR /var/www
 
 USER root
 
-RUN chown -R www-data:www-data /var/www 
+RUN chown -R www-data:www-data /var/www
+RUN git config --global --add safe.directory /var/www

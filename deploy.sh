@@ -2,7 +2,6 @@
 
 set -e
 
-pwd
 cd ~/rebalax
 
 cp .env.example .env

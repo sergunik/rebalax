@@ -9,6 +9,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Maintenance Mode
+        uses: laravel/maintenance-mode@v1
+        with:
+          state: enable
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -40,3 +45,29 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
           QUEUE_CONNECTION: ${{ secrets.QUEUE_CONNECTION }}
+
+      - name: Run tests
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_KEY }}
+          script: |
+            cd ~/rebalax
+            docker exec rebalax-app php artisan test
+
+      - name: Clean up old files (remove unused docker containers and images)
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_KEY }}
+          script: |
+            docker system prune -f
+            docker volume prune -f
+            docker image prune -a -f
+
+      - name: Clear Maintenance Mode
+        uses: laravel/maintenance-mode@v1
+        with:
+          state: disable
