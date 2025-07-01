@@ -59,7 +59,9 @@ jobs:
           key: ${{ secrets.VPS_KEY }}
           script: |
             cd ~/rebalax
+            docker exec rebalax-app composer install --no-interaction
             docker exec rebalax-app php artisan test
+            docker exec rebalax-app composer install --no-dev --no-interaction
 
       - name: Clean up old files (remove unused docker containers and images)
         uses: appleboy/ssh-action@v0.1.10
