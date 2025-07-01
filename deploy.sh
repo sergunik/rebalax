@@ -2,17 +2,6 @@
 
 set -e
 
-TIMESTAMP=$(date +%Y%m%d%H%M%S)
-DEPLOY_BASE=~/rebalax
-RELEASE_DIR=$DEPLOY_BASE/releases/release_$TIMESTAMP
-CURRENT=$DEPLOY_BASE/current
-
-mkdir -p "$RELEASE_DIR"
-cp -r ~/rebalax-temp/. "$RELEASE_DIR"
-rm -rf ~/rebalax-temp
-
-cd "$RELEASE_DIR"
-
 cp .env.example .env
 
 [ -n "$APP_KEY" ] && sed -i "s|^APP_KEY=.*|APP_KEY=$APP_KEY|" .env
@@ -25,10 +14,8 @@ cp .env.example .env
 [ -n "$QUEUE_CONNECTION" ] && sed -i "s|^QUEUE_CONNECTION=.*|QUEUE_CONNECTION=$QUEUE_CONNECTION|" .env
 
 docker-compose -f docker-compose.prod.yml build
+docker stop $(docker ps -a -q)
 docker-compose -f docker-compose.prod.yml up -d
-
-sleep 10
-curl -f http://localhost:8000 > /dev/null
 
 docker exec rebalax-app composer install --no-dev --optimize-autoloader
 
@@ -38,14 +25,3 @@ docker exec rebalax-app php artisan route:clear
 docker exec rebalax-app php artisan view:clear
 docker exec rebalax-app php artisan migrate --force
 docker exec rebalax-app php artisan optimize
-
-ln -sfn "$RELEASE_DIR" "$CURRENT"
-
-cd "$DEPLOY_BASE/releases"
-ls -dt release_* | tail -n +3 | while read dir; do
-    cd "$DEPLOY_BASE/releases/$dir"
-    docker-compose -f docker-compose.prod.yml down -v
-    rm -rf "$DEPLOY_BASE/releases/$dir"
-done
-
-echo "Deployment completed: $TIMESTAMP"
