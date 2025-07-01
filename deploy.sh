@@ -9,7 +9,7 @@ CURRENT=$DEPLOY_BASE/current
 
 mkdir -p "$RELEASE_DIR"
 cp -R ~/rebalax-temp/* "$RELEASE_DIR"
-rm -rf ~/rebalax-temp
+#rm -rf ~/rebalax-temp
 
 cd "$RELEASE_DIR"
 
