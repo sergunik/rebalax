@@ -28,5 +28,5 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
           script: |
-            chmod +x ~/rebalax-temp/deploy.sh
-            ~/rebalax-temp/deploy.sh
+            chmod +x ~/rebalax/deploy.sh
+            ~/rebalax/deploy.sh
