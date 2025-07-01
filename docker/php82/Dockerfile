@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zip \
     unzip \
-    libpq-dev
+    libpq-dev \
+    cron
 
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd pdo pgsql pdo_pgsql
 
@@ -20,3 +21,7 @@ USER root
 
 RUN chown -R www-data:www-data /var/www
 RUN git config --global --add safe.directory /var/www
+
+COPY docker/crontab/laravel /etc/cron.d/laravel
+RUN chmod 0644 /etc/cron.d/laravel
+CMD cron && php-fpm
