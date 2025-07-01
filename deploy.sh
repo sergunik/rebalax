@@ -17,11 +17,11 @@ cp .env.example .env
 
 docker-compose -f docker-compose.prod.yml up -d --build
 
-docker exec rebalax-app composer install --no-dev --optimize-autoloader
+docker exec rebalax-app composer install --no-dev
 
 docker exec rebalax-app php artisan config:clear
+docker exec rebalax-app php artisan migrate --force
 docker exec rebalax-app php artisan cache:clear
 docker exec rebalax-app php artisan route:clear
 docker exec rebalax-app php artisan view:clear
-docker exec rebalax-app php artisan migrate --force
 docker exec rebalax-app php artisan optimize
