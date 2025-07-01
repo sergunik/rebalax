@@ -18,9 +18,9 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
-          source: "*"
+          source: "*,.*"
           target: "~/rebalax-temp"
-          strip_components: 1
+          rm: true
 
       - name: Run remote deployment script
         uses: appleboy/ssh-action@v0.1.10
