@@ -16,9 +16,7 @@ cp .env.example .env
 [ -n "$REDIS_PASSWORD" ] && sed -i "s|^REDIS_PASSWORD=.*|REDIS_PASSWORD=$REDIS_PASSWORD|" .env
 [ -n "$QUEUE_CONNECTION" ] && sed -i "s|^QUEUE_CONNECTION=.*|QUEUE_CONNECTION=$QUEUE_CONNECTION|" .env
 
-docker-compose -f docker-compose.prod.yml build
-docker stop $(docker ps -a -q)
-docker-compose -f docker-compose.prod.yml up -d
+docker-compose -f docker-compose.prod.yml up -d --build
 
 docker exec rebalax-app composer install --no-dev --optimize-autoloader
 
