@@ -42,7 +42,7 @@ docker exec rebalax-app php artisan optimize
 ln -sfn "$RELEASE_DIR" "$CURRENT"
 
 cd "$DEPLOY_BASE/releases"
-ls -dt release_* | tail -n +6 | while read dir; do
+ls -dt release_* | tail -n +3 | while read dir; do
     cd "$DEPLOY_BASE/releases/$dir"
     docker-compose -f docker-compose.prod.yml down -v
     rm -rf "$DEPLOY_BASE/releases/$dir"
