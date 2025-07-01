@@ -3,7 +3,6 @@ services:
     build:
       context: .
       dockerfile: docker/php82/Dockerfile
-    container_name: rebalax-app
     restart: unless-stopped
     working_dir: /var/www/
     volumes:
@@ -13,7 +12,6 @@ services:
 
   nginx:
     image: nginx:alpine
-    container_name: rebalax-nginx
     restart: unless-stopped
     ports:
       - "8000:80"
@@ -25,7 +23,6 @@ services:
 
   db:
     image: postgres:15-alpine
-    container_name: rebalax-db
     restart: unless-stopped
     environment:
       POSTGRES_DB: rebalax
@@ -44,3 +41,4 @@ networks:
 
 volumes:
   dbdata:
+    external: true
