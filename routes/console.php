@@ -12,5 +12,4 @@ Artisan::command('inspire', function () {
 Schedule::command(PriceCollectorCommand::class)
     ->everyFiveMinutes()
     ->runInBackground()
-    ->withoutOverlapping()
-    ->appendOutputTo(storage_path('logs/price_collector.log'));
+    ->withoutOverlapping();
