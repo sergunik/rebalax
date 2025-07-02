@@ -17,7 +17,7 @@ jobs:
           key: ${{ secrets.VPS_KEY }}
           script: |
             cd ~/rebalax
-            docker exec rebalax-app php artisan down
+            docker exec rebalax-app php artisan down || true
 
       - name: Checkout code
         uses: actions/checkout@v4
