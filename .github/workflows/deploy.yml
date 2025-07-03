@@ -37,7 +37,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
-          envs: APP_KEY,APP_ENV,APP_URL,DB_DATABASE,DB_USERNAME,DB_PASSWORD,REDIS_PASSWORD,QUEUE_CONNECTION
+          envs: APP_KEY,APP_ENV,APP_URL,APP_DEBUG,DB_DATABASE,DB_USERNAME,DB_PASSWORD,REDIS_PASSWORD,QUEUE_CONNECTION
           script: |
             chmod +x ~/rebalax/deploy.sh
             ~/rebalax/deploy.sh
@@ -45,6 +45,7 @@ jobs:
           APP_KEY: ${{ secrets.APP_KEY }}
           APP_ENV: ${{ secrets.APP_ENV }}
           APP_URL: ${{ secrets.APP_URL }}
+          APP_DEBUG: ${{ secrets.APP_DEBUG }}
           DB_DATABASE: ${{ secrets.DB_DATABASE }}
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}

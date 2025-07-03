@@ -17,52 +17,35 @@ It supports trading via centralized exchange APIs (e.g. Binance), converting ass
     git clone https://github.com/your-username/your-repo.git
     cd your-repo
     ```
-    
+
+1. Copy `.env.example` to `.env` and configure your database and other environment variables if necessary.
+
 1. Run docker compose to start the application:
     ```bash
-    docker compose up -d
-    ```
-
-    This will start the application in detached mode. You can check the logs with:
-    ```bash
-    docker compose logs -f
-    ```
-
-    To stop the application, run:
-    ```bash
-    docker compose down
+    docker volume create dbdata
+    docker compose up -d --build
     ```
     Go inside the container to run commands:
     ```bash
     docker compose exec app bash
     ```
 
-1. **Install dependencies:**
+1. **Install dependencies (inside the container):**
     ```bash
     composer install
     ```
 
-4. **Set up environment:**
+1. **Database setup:**
 
-    -   Copy `.env.example` to `.env` and configure your database and other environment variables.
-    -   Generate application key:
-        ```bash
-        php artisan key:generate
-        ```
+    Run database migrations:
+    ```bash
+    php artisan migrate
+    ```
 
-5. **Database setup:**
-
-    -   Run database migrations:
-        ```bash
-        php artisan migrate
-        ```
-
-    -   Seed the database (optional):
-        ```bash
-        php artisan db:seed
-        ```
-        
-
+    Seed the database (optional):
+    ```bash
+    php artisan db:seed
+    ```
 
 ## Frontend Development
 
@@ -84,6 +67,7 @@ This project uses [PHP\_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffe
 -   To run the linter:
     ```bash
     composer lint
+    composer lint-fix
     ```
     
 ## License

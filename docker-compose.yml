@@ -11,6 +11,23 @@ services:
     networks:
       - rebalax
 
+  cron:
+    build:
+      context: .
+      dockerfile: docker/php82/Dockerfile
+    container_name: rebalax-cron
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - app
+      - db
+    entrypoint: [ "/bin/sh", "-c" ]
+    command: [ "cron -f" ]
+    networks:
+      - rebalax
+
   nginx:
     image: nginx:alpine
     container_name: rebalax-nginx
