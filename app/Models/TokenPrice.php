@@ -6,6 +6,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property string $symbol The token symbol (e.g., BTC, ETH)
+ * @property string $pair The trading pair (e.g., BTC_USD)
+ * @property float $price_usd The price of the token in USD
+ * @property \Illuminate\Support\Carbon $fetched_at The timestamp when the price was fetched
+ */
 class TokenPrice extends Model
 {
     protected $fillable = [
@@ -19,4 +26,6 @@ class TokenPrice extends Model
         'price_usd' => 'decimal:8',
         'fetched_at' => 'datetime',
     ];
+
+    public $timestamps = false;
 }

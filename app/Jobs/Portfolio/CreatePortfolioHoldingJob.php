@@ -15,7 +15,6 @@ class CreatePortfolioHoldingJob implements ShouldQueue
 
     public function __construct(
         public readonly int $portfolioId,
-        public readonly int $userId,
         public readonly string $tokenSymbol,
         public readonly float $quantity,
         public readonly ?DateTimeInterface $lastUpdatedAt = null,
@@ -27,7 +26,6 @@ class CreatePortfolioHoldingJob implements ShouldQueue
         PortfolioHolding::updateOrCreate(
             [
                 'portfolio_id' => $this->portfolioId,
-                'user_id' => $this->userId,
                 'token_symbol' => $this->tokenSymbol,
             ],
             [

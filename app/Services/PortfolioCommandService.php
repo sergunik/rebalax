@@ -48,7 +48,6 @@ class PortfolioCommandService
     {
         $job = new CreatePortfolioHoldingJob(
             $data['portfolio_id'],
-            $data['user_id'],
             $data['token_symbol'],
             $data['quantity'],
             $data['last_updated_at'] ?? null

@@ -23,7 +23,7 @@ It supports trading via centralized exchange APIs (e.g. Binance), converting ass
 1. Run docker compose to start the application:
     ```bash
     docker volume create dbdata
-    docker compose up -d --build
+    docker-compose up -d --build
     ```
     Go inside the container to run commands:
     ```bash

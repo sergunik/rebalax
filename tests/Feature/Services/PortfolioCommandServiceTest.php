@@ -40,7 +40,7 @@ class PortfolioCommandServiceTest extends TestCase
         ];
         $portfolio = $this->service->createPortfolio($portfolioData);
         $this->assertEquals('Integration Portfolio', $portfolio->name);
-        $this->assertEquals(1, $portfolio->user_id);
+        $this->assertEquals($this->user->id, $portfolio->user_id);
         $this->assertDatabaseHas('portfolios', [
             'user_id' => $this->user->id,
             'name' => 'Integration Portfolio',
@@ -81,7 +81,6 @@ class PortfolioCommandServiceTest extends TestCase
         ]);
         $holdingData = [
             'portfolio_id' => $portfolio->id,
-            'user_id' => $this->user->id,
             'token_symbol' => 'BTC',
             'quantity' => 0.5,
             'last_updated_at' => now(),
@@ -89,7 +88,6 @@ class PortfolioCommandServiceTest extends TestCase
         $this->service->updateHolding($holdingData);
         $this->assertDatabaseHas('portfolio_holdings', [
             'portfolio_id' => $portfolio->id,
-            'user_id' => $this->user->id,
             'token_symbol' => 'BTC',
             'quantity' => 0.5,
         ]);
@@ -103,7 +101,6 @@ class PortfolioCommandServiceTest extends TestCase
         ]);
         $initialData = [
             'portfolio_id' => $portfolio->id,
-            'user_id' => $this->user->id,
             'token_symbol' => 'BTC',
             'quantity' => 0.5,
             'last_updated_at' => now()->subDay(),
@@ -111,14 +108,12 @@ class PortfolioCommandServiceTest extends TestCase
         $this->service->updateHolding($initialData);
         $this->assertDatabaseHas('portfolio_holdings', [
             'portfolio_id' => $portfolio->id,
-            'user_id' => $this->user->id,
             'token_symbol' => 'BTC',
             'quantity' => 0.5,
         ]);
 
         $updatedData = [
             'portfolio_id' => $portfolio->id,
-            'user_id' => $this->user->id,
             'token_symbol' => 'BTC',
             'quantity' => 1.25,
             'last_updated_at' => now(),
@@ -126,7 +121,6 @@ class PortfolioCommandServiceTest extends TestCase
         $this->service->updateHolding($updatedData);
         $this->assertDatabaseHas('portfolio_holdings', [
             'portfolio_id' => $portfolio->id,
-            'user_id' => $this->user->id,
             'token_symbol' => 'BTC',
             'quantity' => 1.25,
         ]);

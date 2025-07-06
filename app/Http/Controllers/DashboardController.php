@@ -10,7 +10,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $user = User::findOrFail(1);
+        $user = auth()->user();
         return view('dashboard.index', compact('user'));
     }
 }

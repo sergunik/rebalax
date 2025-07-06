@@ -14,7 +14,6 @@ class PortfolioHolding extends Model
 
     protected $fillable = [
         'portfolio_id',
-        'user_id',
         'token_symbol',
         'quantity',
         'last_updated_at',
@@ -34,10 +33,4 @@ class PortfolioHolding extends Model
     {
         return $this->belongsTo(User::class);
     }
-
-//    // Helper method to calculate current value
-//    public function getCurrentValue(): float
-//    {
-//        return (float) ($this->quantity * $this->last_price);
-//    }
 }

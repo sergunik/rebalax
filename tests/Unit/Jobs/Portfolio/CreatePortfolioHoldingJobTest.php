@@ -21,7 +21,6 @@ class CreatePortfolioHoldingJobTest extends TestCase
 
         $job = new CreatePortfolioHoldingJob(
             $holdingData['portfolio_id'],
-            $holdingData['user_id'],
             $holdingData['token_symbol'],
             $holdingData['quantity'],
             $holdingData['last_updated_at'] ?? null
@@ -38,7 +37,6 @@ class CreatePortfolioHoldingJobTest extends TestCase
     {
         yield 'basic holding' => [[
             'portfolio_id' => 1,
-            'user_id' => 1,
             'token_symbol' => 'BTC',
             'quantity' => 0.5,
             'last_updated_at' => now(),
@@ -46,7 +44,6 @@ class CreatePortfolioHoldingJobTest extends TestCase
 
         yield 'another holding' => [[
             'portfolio_id' => 2,
-            'user_id' => 1,
             'token_symbol' => 'ETH',
             'quantity' => 10.0,
             'last_updated_at' => now(),
