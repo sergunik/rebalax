@@ -33,13 +33,8 @@ class Portfolio extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function allocations(): HasMany
+    public function assets(): HasMany
     {
-        return $this->hasMany(PortfolioAllocation::class);
-    }
-
-    public function holdings(): HasMany
-    {
-        return $this->hasMany(PortfolioHolding::class);
+        return $this->hasMany(PortfolioAsset::class);
     }
 }

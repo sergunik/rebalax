@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class PortfolioAllocation extends Model
+class PortfolioAsset extends Model
 {
     use HasFactory;
 
@@ -16,10 +16,12 @@ class PortfolioAllocation extends Model
         'portfolio_id',
         'token_symbol',
         'target_allocation_percent',
+        'quantity',
     ];
 
     protected $casts = [
         'target_allocation_percent' => 'decimal:4',
+        'quantity' => 'decimal:18',
     ];
 
     public function portfolio(): BelongsTo

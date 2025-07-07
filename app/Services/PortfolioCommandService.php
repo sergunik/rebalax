@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Jobs\Portfolio\CreatePortfolioAssetJob;
 use App\Jobs\Portfolio\CreatePortfolioJob;
-use App\Jobs\Portfolio\CreatePortfolioAllocationJob;
-use App\Jobs\Portfolio\CreatePortfolioHoldingJob;
 use App\Models\Portfolio;
 use Illuminate\Contracts\Bus\Dispatcher;
 
@@ -32,25 +31,13 @@ class PortfolioCommandService
             ->latest('id')->firstOrFail();
     }
 
-    public function assignAllocations(int $portfolioId, array $allocations): void
+    public function assignAsset(int $portfolioId, string $tokenSymbol, float $targetAllocationPercent, float $quantity = 0.0): void
     {
-        foreach ($allocations as $allocation) {
-            $job = new CreatePortfolioAllocationJob(
-                $portfolioId,
-                $allocation['token_symbol'],
-                $allocation['target_allocation_percent']
-            );
-            $this->dispatcher->dispatchSync($job);
-        }
-    }
-
-    public function updateHolding(array $data): void
-    {
-        $job = new CreatePortfolioHoldingJob(
-            $data['portfolio_id'],
-            $data['token_symbol'],
-            $data['quantity'],
-            $data['last_updated_at'] ?? null
+        $job = new CreatePortfolioAssetJob(
+            $portfolioId,
+            $tokenSymbol,
+            $targetAllocationPercent,
+            $quantity
         );
         $this->dispatcher->dispatchSync($job);
     }
