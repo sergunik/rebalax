@@ -11,7 +11,7 @@ use Illuminate\Contracts\Bus\Dispatcher;
 
 class PortfolioCommandService
 {
-    public function __construct(protected Dispatcher $dispatcher)
+    public function __construct(private readonly Dispatcher $dispatcher)
     {
     }
 
