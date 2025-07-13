@@ -15,5 +15,7 @@ readonly class RebalanceAssetDto
         public float $differencePercent,
         public float $priceUsd,
         public float $quantityDelta, // positive = need to buy, negative = sell
+        public float $quantityBefore,
+        public float $quantityAfter,
     ) {}
 }

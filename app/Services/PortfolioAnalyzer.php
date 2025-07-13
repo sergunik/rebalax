@@ -28,13 +28,15 @@ readonly class PortfolioAnalyzer
 
             return new RebalanceAssetDto(
                 tokenSymbol: $asset->token_symbol,
-                currentUsdValue: $currentValueUsd,
-                targetUsdValue: $targetUsdValue,
-                currentPercent: $currentAllocationPercent,
+                currentUsdValue: (float) $currentValueUsd,
+                targetUsdValue: (float) $targetUsdValue,
+                currentPercent: (float) $currentAllocationPercent,
                 targetPercent: (float) $asset->target_allocation_percent,
                 differencePercent: abs($currentAllocationPercent - $asset->target_allocation_percent),
-                priceUsd: $tokenPrice,
-                quantityDelta: $targetUsdValue / $tokenPrice - $asset->quantity,
+                priceUsd: (float) $tokenPrice,
+                quantityDelta: (float) $targetUsdValue / $tokenPrice - $asset->quantity,
+                quantityBefore: (float) $asset->quantity,
+                quantityAfter: (float) $targetUsdValue / $tokenPrice,
             );
         });
 

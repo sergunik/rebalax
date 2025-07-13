@@ -84,4 +84,45 @@ class SimpleRebalanceServiceTest extends TestCase
             'quantity' => 0.6,
         ]);
     }
+
+    public function test_rebalance_log_added(): void
+    {
+        $portfolio = Portfolio::factory()->create([
+            'is_active' => true,
+        ]);
+
+        PortfolioAsset::factory()->create([
+            'portfolio_id' => $portfolio->id,
+            'token_symbol' => 'BTC',
+            'quantity' => 1.0,
+            'target_allocation_percent' => 50.0,
+        ]);
+        PortfolioAsset::factory()->create([
+            'portfolio_id' => $portfolio->id,
+            'token_symbol' => 'ETH',
+            'quantity' => 10.0,
+            'target_allocation_percent' => 50.0,
+        ]);
+
+        TokenPrice::factory()->create([
+            'symbol' => 'BTC',
+            'pair' => 'BTC_USD',
+            'price_usd' => 100000.0,
+        ]);
+        TokenPrice::factory()->create([
+            'symbol' => 'ETH',
+            'pair' => 'ETH_USD',
+            'price_usd' => 2000.0,
+        ]);
+
+        $service = app(SimpleRebalanceService::class);
+        $service->do();
+
+        $this->assertDatabaseHas('rebalance_logs', [
+            'portfolio_id' => $portfolio->id,
+            'token_symbol' => 'BTC',
+            'quantity_before' => 1.0,
+            'quantity_after' => 0.6,
+        ]);
+    }
 }

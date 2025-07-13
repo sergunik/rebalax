@@ -14,7 +14,7 @@ class DoRebalanceJob implements ShouldQueue
     use Queueable;
 
     public function __construct(
-        public readonly PortfolioAnalysisDto $dto
+        private readonly PortfolioAnalysisDto $dto
     ) {
     }
 
@@ -30,5 +30,8 @@ class DoRebalanceJob implements ShouldQueue
         }
         $portfolio->last_rebalanced_at = now();
         $portfolio->save();
+
+        PortfolioRebalancedJob::dispatch($this->dto)
+            ->delay(now()->addSeconds(5));
     }
 }
