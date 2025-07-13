@@ -27,7 +27,7 @@ class ExmoPriceCollectorTest extends TestCase
     public function test_it_successfully_collects_and_stores_prices()
     {
         $mockResponse = [
-            'BTC_USD' => [
+            'BTC_USDT' => [
                 'buy_price' => '50000.00',
                 'sell_price' => '49900.00',
                 'last_trade' => '49950.00',
@@ -90,7 +90,7 @@ class ExmoPriceCollectorTest extends TestCase
     public function test_it_handles_invalid_ticker_data()
     {
         $mockResponse = [
-            'BTC_USD' => [
+            'BTC_USDT' => [
                 'buy_price' => '50000.00',
                 'sell_price' => '49900.00',
                 'high' => '51000.00',
@@ -103,7 +103,7 @@ class ExmoPriceCollectorTest extends TestCase
                 'high' => '3250.00',
                 'low' => '3150.00'
             ],
-            'LTC_USD' => [
+            'LTC_USDT' => [
                 'buy_price' => '150.00',
                 'sell_price' => '149.00',
                 'last_trade' => '149.50',
@@ -169,10 +169,10 @@ class ExmoPriceCollectorTest extends TestCase
     public function test_it_inserts_multiple_records_in_single_query()
     {
         $mockResponse = [
-            'BTC_USD' => [
+            'BTC_USDT' => [
                 'last_trade' => '50000.00'
             ],
-            'ETH_USD' => [
+            'ETH_USDT' => [
                 'last_trade' => '3200.00'
             ],
             'ADA_USDT' => [
@@ -201,9 +201,9 @@ class ExmoPriceCollectorTest extends TestCase
     public function test_it_correctly_extracts_symbols_from_different_pair_formats()
     {
         $mockResponse = [
-            'BTC_USD' => ['last_trade' => '50000.00'],
+            'BTC_USDT' => ['last_trade' => '50000.00'],
             'ETH_USDT' => ['last_trade' => '3200.00'],
-            'DOGE_USD' => ['last_trade' => '0.08'],
+            'DOGE_USDT' => ['last_trade' => '0.08'],
             'USDT_USD' => ['last_trade' => '1.00']
         ];
 
@@ -216,6 +216,5 @@ class ExmoPriceCollectorTest extends TestCase
         $this->assertDatabaseHas('token_prices', ['symbol' => 'BTC', 'price_usd' => '50000.00000000']);
         $this->assertDatabaseHas('token_prices', ['symbol' => 'ETH', 'price_usd' => '3200.00000000']);
         $this->assertDatabaseHas('token_prices', ['symbol' => 'DOGE', 'price_usd' => '0.08000000']);
-        $this->assertDatabaseHas('token_prices', ['symbol' => 'USDT', 'price_usd' => '1.00000000']);
     }
 }

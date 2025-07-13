@@ -91,39 +91,37 @@ class ExmoPriceCollector implements PriceCollector
 
     private function extractUsdPrice(string $pair, array $data): ?float
     {
-        $lastTrade = (float) $data['last_trade'];
-
-        if ($this->isUsdtPair($pair)) {
-            return $lastTrade;
+        $symbol = explode('_', $pair);
+        if (count($symbol) < 2) {
+            return null; // Invalid pair format
         }
 
-        if ($this->isUsdPair($pair)) {
-            return $lastTrade;
+        if (
+            in_array($symbol[0], config('price.skip'))
+            || in_array($symbol[1], config('price.skip'))
+        ) {
+            return null;
         }
 
-        return null;
-    }
+        // Check if the pair ends with a stablecoin
+        if (!in_array($symbol[1], config('price.stablecoins'))) {
+            return null;
+        }
 
-    private function isUsdPair(string $pair): bool
-    {
-        return str_ends_with($pair, '_USD');
-    }
+        if (in_array($symbol[0], config('price.stablecoins'))) {
+            return null; // Skip stablecoin to stablecoin pairs
+        }
 
-    private function isUsdtPair(string $pair): bool
-    {
-        return str_ends_with($pair, '_USDT');
+        // Keep only pairs with USDT stablecoins
+        if ($symbol[1] !== 'USDT') {
+            return null;
+        }
+
+        return (float) $data['last_trade'];
     }
 
     private function extractSymbol(string $pair): string
     {
-        if ($this->isUsdPair($pair)) {
-            return substr($pair, 0, -4);
-        }
-
-        if ($this->isUsdtPair($pair)) {
-            return substr($pair, 0, -5);
-        }
-
         return explode('_', $pair)[0];
     }
 

@@ -42,17 +42,16 @@ readonly class TokenPriceRepository
     }
 
     /**
-     * @todo refactor it
+     * @todo cache this method to improve performance
      * @return float[]
      */
     public function getLatestPrices(): array
     {
         return $this->tokenPrice
             ->select('symbol', 'price_usd')
-            ->whereIn('id', function ($query) {
-                $query->select('id')
+            ->whereIn('fetched_at', function ($query) {
+                $query->select('fetched_at')
                     ->from('token_prices as tp2')
-                    ->whereColumn('tp2.symbol', 'token_prices.symbol')
                     ->orderBy('fetched_at', 'desc')
                     ->limit(1);
             })
