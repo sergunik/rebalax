@@ -9,21 +9,25 @@ use App\Jobs\Rebalance\DoRebalanceJob;
 use App\Models\Portfolio;
 use Illuminate\Contracts\Bus\Dispatcher;
 
-final class SimpleRebalanceService implements RebalanceChecker
+final readonly class SimpleRebalanceService implements RebalanceChecker
 {
     public function __construct(
-        private readonly PortfolioAnalyzer $analyzer,
-        private readonly Dispatcher $dispatcher
+        private PortfolioAnalyzer $analyzer,
+        private Dispatcher $dispatcher
     ) {}
 
-    public function do(): void
+    public function do(int $batchOffset, int $batchSize): int
     {
         $portfolios = Portfolio::query()
             ->with('assets')
             ->where('is_active', true)
-            ->orderBy('last_rebalanced_at')
-            ->limit(10)
+            ->orderBy('id')
+            ->offset($batchOffset)
+            ->limit($batchSize)
             ->get();
+        if ($portfolios->isEmpty()) {
+            return 0;
+        }
 
         foreach ($portfolios as $portfolio) {
             $analysisDto = $this->analyzer->for($portfolio);
@@ -32,6 +36,8 @@ final class SimpleRebalanceService implements RebalanceChecker
                 $this->dispatcher->dispatch(new DoRebalanceJob($analysisDto));
             }
         }
+
+        return $portfolios->count();
     }
 }
 

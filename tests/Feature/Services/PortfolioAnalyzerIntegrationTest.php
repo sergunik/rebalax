@@ -31,8 +31,16 @@ class PortfolioAnalyzerIntegrationTest extends TestCase
             'quantity' => 10.0,
             'target_allocation_percent' => 40.0,
         ]);
-        TokenPrice::factory()->create(['symbol' => 'BTC', 'price_usd' => 107000.0]);
-        TokenPrice::factory()->create(['symbol' => 'ETH', 'price_usd' => 2500.0]);
+        TokenPrice::factory()->create([
+            'symbol' => 'BTC',
+            'price_usd' => 107000.0,
+            'fetched_at' => now(),
+        ]);
+        TokenPrice::factory()->create([
+            'symbol' => 'ETH',
+            'price_usd' => 2500.0,
+            'fetched_at' => now(),
+        ]);
 
         $analyzer = new PortfolioAnalyzer(app(TokenPriceRepository::class));
 
@@ -81,8 +89,16 @@ class PortfolioAnalyzerIntegrationTest extends TestCase
             'quantity' => 100.0,
             'target_allocation_percent' => 50.0,
         ]);
-        TokenPrice::factory()->create(['symbol' => 'BTC', 'price_usd' => 100000.0]);
-        TokenPrice::factory()->create(['symbol' => 'ETH', 'price_usd' => 2000.0]);
+        TokenPrice::factory()->create([
+            'symbol' => 'BTC',
+            'price_usd' => 100000.0,
+            'fetched_at' => now(),
+        ]);
+        TokenPrice::factory()->create([
+            'symbol' => 'ETH',
+            'price_usd' => 2000.0,
+            'fetched_at' => now(),
+        ]);
 
         $analyzer = new PortfolioAnalyzer(app(TokenPriceRepository::class));
 

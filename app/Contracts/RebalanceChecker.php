@@ -6,5 +6,5 @@ namespace App\Contracts;
 
 interface RebalanceChecker
 {
-    public function do(): void;
+    public function do(int $batchOffset, int $batchSize): int;
 }

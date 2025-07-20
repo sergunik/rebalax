@@ -97,23 +97,23 @@ class ExmoPriceCollector implements PriceCollector
         }
 
         if (
-            in_array($symbol[0], config('price.skip'))
-            || in_array($symbol[1], config('price.skip'))
+            in_array($symbol[0], config('rebalax.price_collector.skip'))
+            || in_array($symbol[1], config('rebalax.price_collector.skip'))
         ) {
             return null;
         }
 
         // Check if the pair ends with a stablecoin
-        if (!in_array($symbol[1], config('price.stablecoins'))) {
+        if (!in_array($symbol[1], config('rebalax.stablecoins'))) {
             return null;
         }
 
-        if (in_array($symbol[0], config('price.stablecoins'))) {
+        if (in_array($symbol[0], config('rebalax.stablecoins'))) {
             return null; // Skip stablecoin to stablecoin pairs
         }
 
         // Keep only pairs with USDT stablecoins
-        if ($symbol[1] !== 'USDT') {
+        if (!in_array($symbol[1], config('rebalax.price_collector.collect_only'))) {
             return null;
         }
 

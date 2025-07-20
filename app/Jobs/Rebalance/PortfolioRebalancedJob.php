@@ -16,7 +16,7 @@ class PortfolioRebalancedJob implements ShouldQueue
     use Queueable;
 
     public function __construct(
-        private readonly PortfolioAnalysisDto $dto
+        public readonly PortfolioAnalysisDto $dto
     ) {
     }
 

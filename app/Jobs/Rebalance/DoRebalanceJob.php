@@ -14,13 +14,19 @@ class DoRebalanceJob implements ShouldQueue
     use Queueable;
 
     public function __construct(
-        private readonly PortfolioAnalysisDto $dto
+        public readonly PortfolioAnalysisDto $dto
     ) {
     }
 
+    /**
+     * @todo: rewrite it into one single Update query
+     */
     public function handle(): void
     {
-        $portfolio = Portfolio::findOrFail($this->dto->portfolioId);
+        $portfolio = Portfolio::query()
+            ->where('id', $this->dto->portfolioId)
+            ->with('assets')
+            ->firstOrFail();
         foreach ($this->dto->assets as $rebalanceAssetDto) {
             $asset = $portfolio->assets()->where('token_symbol', $rebalanceAssetDto->tokenSymbol)->first();
             if ($asset) {

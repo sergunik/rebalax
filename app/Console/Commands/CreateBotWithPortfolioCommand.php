@@ -17,7 +17,6 @@ class CreateBotWithPortfolioCommand extends Command
     private User $user;
     private array $tokens;
     private float $initialAmount = 1000.0;
-    private float $thresholdPercent = 7.0;
 
     public function __construct(
         private readonly TokenPriceRepository $tokenPriceRepository,
@@ -42,7 +41,7 @@ class CreateBotWithPortfolioCommand extends Command
         $portfolio = Portfolio::factory()->create([
             'user_id' => $this->user->id,
             'is_active' => true,
-            'rebalance_threshold_percent' => $this->thresholdPercent,
+            'rebalance_threshold_percent' => config('rebalax.rebalance.simple.threshold_percent'),
             'last_rebalanced_at' => null,
         ]);
 

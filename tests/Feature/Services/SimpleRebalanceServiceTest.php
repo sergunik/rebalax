@@ -19,7 +19,7 @@ class SimpleRebalanceServiceTest extends TestCase
     public function test_no_active_portfolio(): void
     {
         $service = app(SimpleRebalanceService::class);
-        $service->do();
+        $service->do(0, 100);
 
         $this->assertDatabaseCount('portfolios', 0);
     }
@@ -38,7 +38,7 @@ class SimpleRebalanceServiceTest extends TestCase
         $this->expectException(ModelNotFoundException::class);
 
         $service = app(SimpleRebalanceService::class);
-        $service->do();
+        $service->do(0, 100);
     }
 
     public function test_rebalance_needed(): void
@@ -64,15 +64,17 @@ class SimpleRebalanceServiceTest extends TestCase
             'symbol' => 'BTC',
             'pair' => 'BTC_USD',
             'price_usd' => 100000.0,
+            'fetched_at' => now(),
         ]);
         TokenPrice::factory()->create([
             'symbol' => 'ETH',
             'pair' => 'ETH_USD',
             'price_usd' => 2000.0,
+            'fetched_at' => now(),
         ]);
 
         $service = app(SimpleRebalanceService::class);
-        $service->do();
+        $service->do(0, 100);
 
         $this->assertDatabaseHas('portfolios', [
             'id' => $portfolio->id,
@@ -108,15 +110,17 @@ class SimpleRebalanceServiceTest extends TestCase
             'symbol' => 'BTC',
             'pair' => 'BTC_USD',
             'price_usd' => 100000.0,
+            'fetched_at' => now(),
         ]);
         TokenPrice::factory()->create([
             'symbol' => 'ETH',
             'pair' => 'ETH_USD',
             'price_usd' => 2000.0,
+            'fetched_at' => now(),
         ]);
 
         $service = app(SimpleRebalanceService::class);
-        $service->do();
+        $service->do(0, 100);
 
         $this->assertDatabaseHas('rebalance_logs', [
             'portfolio_id' => $portfolio->id,
