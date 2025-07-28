@@ -40,17 +40,17 @@ services:
     networks:
       - rebalax
 
-  node:
-    image: node:20-alpine
-    container_name: rebalax-node
-    working_dir: /var/www
-    volumes:
-      - ./tailadmin/:/var/www
-    ports:
-      - "3000:3000"
-    command: sh -c "npm install && npm run start"
-    networks:
-      - rebalax
+#  node:
+#    image: node:20-alpine
+#    container_name: rebalax-node
+#    working_dir: /var/www
+#    volumes:
+#      - ./tailadmin/:/var/www
+#    ports:
+#      - "3000:3000"
+#    command: sh -c "npm install && npm run start"
+#    networks:
+#      - rebalax
 
   db:
     image: postgres:15-alpine
@@ -67,9 +67,50 @@ services:
     networks:
       - rebalax
 
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: rebalax-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./docker/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./docker/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+    environment:
+      - GF_SECURITY_ADMIN_USER=rebalax
+      - GF_SECURITY_ADMIN_PASSWORD=rebalax
+      - GF_LOCALE=en-US
+      - LANG=en_US.UTF-8
+      - LANGUAGE=en_US:en
+    networks:
+      - rebalax
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: rebalax-prometheus
+    restart: unless-stopped
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command: --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - app
+    networks:
+      - rebalax
+
+  redis:
+    image: redis:alpine
+    container_name: rebalax-redis
+    restart: unless-stopped
+    networks:
+      - rebalax
+
 networks:
   rebalax:
     driver: bridge
 
 volumes:
   dbdata:
+  grafana-storage:

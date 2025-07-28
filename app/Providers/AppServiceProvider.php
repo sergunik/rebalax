@@ -11,6 +11,8 @@ use App\Services\ExmoPriceCollector;
 use App\Contracts\RebalanceChecker;
 use App\Services\SimpleRebalanceService;
 use Illuminate\Support\ServiceProvider;
+use Prometheus\CollectorRegistry;
+use Prometheus\Storage\Redis as PrometheusRedis;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +21,16 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(PriceCollector::class, ExmoPriceCollector::class);
         $this->app->singleton(RebalanceChecker::class, SimpleRebalanceService::class);
         $this->app->singleton(TokenPriceRepository::class, CachedTokenPriceRepository::class);
+
+        $this->app->singleton(CollectorRegistry::class, function () {
+            return new CollectorRegistry(
+                new PrometheusRedis([
+                    'host' => config('app.redis.host'),
+                    'port' => config('app.redis.port'),
+                    'persistent_connections' => true,
+                ])
+            );
+        });
     }
 
     public function boot(): void

@@ -1,0 +1,118 @@
+{
+    "__inputs": [],
+    "__requires": [],
+    "annotations": {
+        "list": [
+            {
+                "builtIn": 1,
+                "datasource": {
+                    "type": "grafana",
+                    "uid": "-- Grafana --"
+                },
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "type": "dashboard"
+            }
+        ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 1,
+    "links": [],
+    "panels": [
+        {
+            "id": 1,
+            "title": "Total Users",
+            "type": "stat",
+            "datasource": { "type": "postgres", "uid": "rebalax_postgres_db" },
+            "gridPos": { "h": 8, "w": 6, "x": 0, "y": 0 },
+            "targets": [{ "rawSql": "SELECT count(*) FROM users;", "format": "table" }]
+        },
+        {
+            "id": 2,
+            "title": "Active Portfolios",
+            "type": "stat",
+            "datasource": { "type": "postgres", "uid": "rebalax_postgres_db" },
+            "gridPos": { "h": 8, "w": 6, "x": 6, "y": 0 },
+            "targets": [{ "rawSql": "SELECT count(*) FROM portfolios WHERE is_active = true;", "format": "table" }]
+        },
+        {
+            "id": 3,
+            "title": "Total Value (at last rebalance)",
+            "type": "stat",
+            "datasource": { "type": "postgres", "uid": "rebalax_postgres_db" },
+            "gridPos": { "h": 8, "w": 6, "x": 12, "y": 0 },
+            "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "textMode": "auto" },
+            "fieldConfig": { "defaults": { "unit": "currencyUSD" } },
+            "targets": [{ "rawSql": "SELECT sum(rl.value_after_usd) FROM rebalance_logs rl INNER JOIN ( SELECT portfolio_id, max(executed_at) as max_executed_at FROM rebalance_logs GROUP BY portfolio_id ) as latest_logs ON rl.portfolio_id = latest_logs.portfolio_id AND rl.executed_at = latest_logs.max_executed_at;", "format": "table" }]
+        },
+        {
+            "id": 4,
+            "title": "Total Rebalance Events",
+            "type": "stat",
+            "datasource": { "type": "postgres", "uid": "rebalax_postgres_db" },
+            "gridPos": { "h": 8, "w": 6, "x": 18, "y": 0 },
+            "targets": [{ "rawSql": "SELECT count(*) FROM rebalance_logs;", "format": "table" }]
+        },
+        {
+            "id": 5,
+            "title": "Portfolio Value for: $portfolio",
+            "type": "timeseries",
+            "datasource": { "type": "postgres", "uid": "rebalax_postgres_db" },
+            "gridPos": { "h": 9, "w": 24, "x": 0, "y": 8 },
+            "fieldConfig": { "defaults": { "unit": "currencyUSD" } },
+            "targets": [{ "rawSql": "SELECT\n  executed_at AS \"time\",\n  sum(value_after_usd) AS \"Total Value\"\nFROM rebalance_logs\nWHERE\n  portfolio_id = ${portfolio:raw} AND\n  $__timeFilter(executed_at)\nGROUP BY executed_at\nORDER BY executed_at;", "format": "time_series" }]
+        },
+        {
+            "id": 6,
+            "title": "Target Asset Allocation",
+            "type": "piechart",
+            "datasource": { "type": "postgres", "uid": "rebalax_postgres_db" },
+            "gridPos": { "h": 9, "w": 12, "x": 0, "y": 17 },
+            "options": { "displayLabels": ["name", "percent"], "pieType": "donut" },
+            "targets": [{ "rawSql": "SELECT\n  token_symbol,\n  target_allocation_percent\nFROM portfolio_assets\nWHERE portfolio_id = ${portfolio:raw};", "format": "table" }]
+        },
+        {
+            "id": 7,
+            "title": "Last Rebalance Log",
+            "type": "table",
+            "datasource": { "type": "postgres", "uid": "rebalax_postgres_db" },
+            "gridPos": { "h": 9, "w": 12, "x": 12, "y": 17 },
+            "targets": [{ "rawSql": "SELECT\n  executed_at,\n  token_symbol,\n  quantity_delta,\n  current_allocation_percent AS \"Allocation Before\",\n  target_allocation_percent AS \"Allocation After\",\n  price_usd\nFROM rebalance_logs\nWHERE portfolio_id = ${portfolio:raw}\nORDER BY executed_at DESC\nLIMIT 10;", "format": "table" }]
+        }
+    ],
+    "refresh": "10s",
+    "schemaVersion": 37,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+        "list": [
+            {
+                "current": {},
+                "datasource": { "type": "postgres", "uid": "rebalax_postgres_db" },
+                "definition": "SELECT name as __text, id as __value FROM portfolios",
+                "hide": 0,
+                "includeAll": false,
+                "multi": false,
+                "name": "portfolio",
+                "options": [],
+                "query": "SELECT name as __text, id as __value FROM portfolios",
+                "refresh": 1,
+                "regex": "",
+                "skipUrlSync": false,
+                "sort": 0,
+                "type": "query"
+            }
+        ]
+    },
+    "time": { "from": "now-6M", "to": "now" },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "Portfolio Performance & Rebalancing Overview",
+    "uid": "rebalax-overview-dashboard",
+    "version": 1,
+    "weekStart": ""
+}

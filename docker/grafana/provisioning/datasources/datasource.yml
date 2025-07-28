@@ -1,0 +1,23 @@
+apiVersion: 1
+
+datasources:
+  - name: 'Rebalax Postgres DB Datasource'
+    type: postgres
+    uid: 'rebalax_postgres_db'
+    url: db:5432
+    user: rebalax
+    database: rebalax
+    secureJsonData:
+      password: 'rebalax'
+    jsonData:
+      sslmode: 'disable' # Should be 'require' or 'verify-full' in real production
+      timeInterval: "30s"
+
+  - name: 'Rebalax Prometheus'
+    type: prometheus
+    uid: 'rebalax_prometheus'
+    url: http://prometheus:9090
+    access: proxy
+    isDefault: false
+    jsonData:
+      timeInterval: "30s"

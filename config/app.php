@@ -129,4 +129,8 @@ return [
         'auth' => Authenticate::class,
     ],
 
+    'redis' => [
+        'host' => env('REDIS_HOST', 'redis'),
+        'port' => env('REDIS_PORT', 6379),
+    ],
 ];
