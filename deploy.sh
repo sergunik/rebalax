@@ -15,6 +15,8 @@ cp .env.example .env
 [ -n "$DB_PASSWORD" ] && sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=$DB_PASSWORD|" .env
 [ -n "$REDIS_PASSWORD" ] && sed -i "s|^REDIS_PASSWORD=.*|REDIS_PASSWORD=$REDIS_PASSWORD|" .env
 [ -n "$QUEUE_CONNECTION" ] && sed -i "s|^QUEUE_CONNECTION=.*|QUEUE_CONNECTION=$QUEUE_CONNECTION|" .env
+[ -n "$GRAFANA_ADMIN_USER" ] && sed -i "s|^GRAFANA_ADMIN_USER=.*|GRAFANA_ADMIN_USER=$GRAFANA_ADMIN_USER|" .env
+[ -n "$GRAFANA_ADMIN_PASSWORD" ] && sed -i "s|^GRAFANA_ADMIN_PASSWORD=.*|GRAFANA_ADMIN_PASSWORD=$GRAFANA_ADMIN_PASSWORD|" .env
 
 docker-compose -f docker-compose.prod.yml up -d --build
 

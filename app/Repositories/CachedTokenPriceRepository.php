@@ -13,7 +13,7 @@ final readonly class CachedTokenPriceRepository implements TokenPriceRepository
     public function __construct(
         private TokenPrice $tokenPrice
     ) {
-        $this->cache = $this->setupCache();
+        $this->cache = $this->setupCache(); //@todo: issue here in case of fresh install
     }
 
     public function getLatestPriceBySymbol(string $symbol): float

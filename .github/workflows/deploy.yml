@@ -37,7 +37,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
-          envs: APP_KEY,APP_ENV,APP_URL,APP_DEBUG,DB_DATABASE,DB_USERNAME,DB_PASSWORD,REDIS_PASSWORD,QUEUE_CONNECTION
+          envs: APP_KEY,APP_ENV,APP_URL,APP_DEBUG,DB_DATABASE,DB_USERNAME,DB_PASSWORD,REDIS_PASSWORD,QUEUE_CONNECTION,GRAFANA_ADMIN_USER,GRAFANA_ADMIN_PASSWORD
           script: |
             chmod +x ~/rebalax/deploy.sh
             ~/rebalax/deploy.sh
