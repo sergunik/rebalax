@@ -65,17 +65,12 @@ services:
       - grafana-storage:/var/lib/grafana
       - ./docker/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
       - ./docker/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
-      - ./docker/grafana/entrypoint.sh:/etc/grafana/entrypoint.sh
     environment:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
-      GRAFANA_DB_DATABASE: ${GRAFANA_DB_DATABASE}
-      GRAFANA_DB_USERNAME: ${GRAFANA_DB_USERNAME}
-      GRAFANA_DB_PASSWORD: ${GRAFANA_DB_PASSWORD}
       GF_LOCALE: en-US
       LANG: en_US.UTF-8
       LANGUAGE: en_US:en
-    entrypoint: ["/bin/bash", "/etc/grafana/entrypoint.sh"]
     networks:
       - rebalax
 

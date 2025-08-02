@@ -21,6 +21,12 @@ cp .env.example .env
 [ -n "$GRAFANA_DB_PASSWORD" ] && sed -i "s|^GRAFANA_DB_PASSWORD=.*|GRAFANA_DB_PASSWORD=$GRAFANA_DB_PASSWORD|" .env
 [ -n "$GRAFANA_DB_DATABASE" ] && sed -i "s|^GRAFANA_DB_DATABASE=.*|GRAFANA_DB_DATABASE=$GRAFANA_DB_DATABASE|" .env
 
+cp ~/docker/grafana/provisioning/datasources/datasource.yml.example ~/docker/grafana/provisioning/datasources/datasource.yml
+
+sed -i "s|\$env.GRAFANA_DB_USERNAME|${GRAFANA_DB_USERNAME}|g" ~/docker/grafana/provisioning/datasources/datasource.yml
+sed -i "s|\$env.GRAFANA_DB_PASSWORD|${GRAFANA_DB_PASSWORD}|g" ~/docker/grafana/provisioning/datasources/datasource.yml
+sed -i "s|\$env.GRAFANA_DB_DATABASE|${GRAFANA_DB_DATABASE}|g" ~/docker/grafana/provisioning/datasources/datasource.yml
+
 docker-compose up -d --build
 
 docker exec rebalax-app composer install --no-dev
