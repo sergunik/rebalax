@@ -18,7 +18,7 @@ cp .env.example .env
 [ -n "$GRAFANA_ADMIN_USER" ] && sed -i "s|^GRAFANA_ADMIN_USER=.*|GRAFANA_ADMIN_USER=$GRAFANA_ADMIN_USER|" .env
 [ -n "$GRAFANA_ADMIN_PASSWORD" ] && sed -i "s|^GRAFANA_ADMIN_PASSWORD=.*|GRAFANA_ADMIN_PASSWORD=$GRAFANA_ADMIN_PASSWORD|" .env
 
-docker-compose -f docker-compose.prod.yml up -d --build
+docker-compose up -d --build
 
 docker exec rebalax-app composer install --no-dev
 

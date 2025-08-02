@@ -5,10 +5,10 @@ datasources:
     type: postgres
     uid: 'rebalax_postgres_db'
     url: db:5432
-    user: rebalax
-    database: rebalax
+    user: ${{ env.DB_USERNAME }}
+    database: ${{ env.DB_DATABASE }}
     secureJsonData:
-      password: 'rebalax'
+      password: '${{ env.DB_PASSWORD }}'
     jsonData:
       sslmode: 'disable' # Should be 'require' or 'verify-full' in real production
       timeInterval: "30s"

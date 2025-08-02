@@ -40,26 +40,14 @@ services:
     networks:
       - rebalax
 
-#  node:
-#    image: node:20-alpine
-#    container_name: rebalax-node
-#    working_dir: /var/www
-#    volumes:
-#      - ./tailadmin/:/var/www
-#    ports:
-#      - "3000:3000"
-#    command: sh -c "npm install && npm run start"
-#    networks:
-#      - rebalax
-
   db:
     image: postgres:15-alpine
     container_name: rebalax-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: rebalax
-      POSTGRES_USER: rebalax
-      POSTGRES_PASSWORD: rebalax
+      POSTGRES_DB: $DB_DATABASE
+      POSTGRES_USER: $DB_USERNAME
+      POSTGRES_PASSWORD: $DB_PASSWORD
     volumes:
       - dbdata:/var/lib/postgresql/data
     ports:
@@ -77,12 +65,17 @@ services:
       - grafana-storage:/var/lib/grafana
       - ./docker/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
       - ./docker/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./docker/grafana/entrypoint.sh:/etc/grafana/entrypoint.sh
     environment:
-      - GF_SECURITY_ADMIN_USER=rebalax
-      - GF_SECURITY_ADMIN_PASSWORD=rebalax
-      - GF_LOCALE=en-US
-      - LANG=en_US.UTF-8
-      - LANGUAGE=en_US:en
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      GF_LOCALE: en-US
+      LANG: en_US.UTF-8
+      LANGUAGE: en_US:en
+    entrypoint: ["/bin/bash", "/etc/grafana/entrypoint.sh"]
     networks:
       - rebalax
 
