@@ -49,16 +49,8 @@ It supports trading via centralized exchange APIs (e.g. Binance), converting ass
 
 ## Frontend Development
 
-This project uses Node.js for frontend asset compilation.
-
-**Build all frontend assets html and css:**
-```bash
-docker compose run --rm node npm run build
-```
-
-Dev version of frontend is accessible at `http://localhost:3000`.
-
-Production version is accessible at `http://localhost:8000`.
+No any frontend, except Grafana dashboard.
+Grafana is accessible at `http://localhost:3000`.
 
 ## Code Quality
 

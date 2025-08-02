@@ -1,15 +1,24 @@
 <?php
 
+use App\Console\Commands\CreateBotWithPortfolioCommand;
 use App\Console\Commands\PriceCollectorCommand;
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
+use App\Console\Commands\RunSimpleRebalanceCommand;
 use Illuminate\Support\Facades\Schedule;
-
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
 
 Schedule::command(PriceCollectorCommand::class)
     ->everyFiveMinutes()
     ->runInBackground()
     ->withoutOverlapping();
+
+Schedule::command(CreateBotWithPortfolioCommand::class)
+    ->everyMinute()
+    ->runInBackground()
+    ->withoutOverlapping();
+
+Schedule::command(RunSimpleRebalanceCommand::class)
+    ->everyThirtyMinutes()
+    ->runInBackground()
+    ->withoutOverlapping()
+    ->when(function () {
+        return config('rebalax.rebalance.simple.enabled', false);
+    });
