@@ -5,10 +5,10 @@ datasources:
     type: postgres
     uid: 'rebalax_postgres_db'
     url: db:5432
-    user: $env.DB_USERNAME
-    database: $env.DB_DATABASE
+    user: $env.GRAFANA_DB_USERNAME
+    database: $env.GRAFANA_DB_DATABASE
     secureJsonData:
-      password: '$env.DB_PASSWORD'
+      password: '$env.GRAFANA_DB_PASSWORD'
     jsonData:
       sslmode: 'disable' # Should be 'require' or 'verify-full' in real production
       timeInterval: "30s"
