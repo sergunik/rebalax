@@ -25,7 +25,10 @@ USER root
 RUN chown -R www-data:www-data /var/www
 RUN git config --global --add safe.directory /var/www
 
-DD_APM_INSTRUMENTATION_LIBRARIES=php:1 DD_APM_INSTRUMENTATION_ENABLED=docker DD_NO_AGENT_INSTALL=true bash -c "$(curl -L https://install.datadoghq.com/scripts/install_script_agent7.sh)"
+RUN DD_APM_INSTRUMENTATION_LIBRARIES=php:1 \
+    DD_APM_INSTRUMENTATION_ENABLED=docker \
+    DD_NO_AGENT_INSTALL=true \
+    bash -c "$(curl -L https://install.datadoghq.com/scripts/install_script_agent7.sh)"
 
 COPY docker/crontab/laravel /etc/cron.d/laravel
 RUN chmod 0644 /etc/cron.d/laravel
