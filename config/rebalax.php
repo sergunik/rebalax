@@ -26,8 +26,8 @@ return [
         'simple' => [
             'enabled' => true,
             'threshold_percent' => 7.0,
-            'batch_size' => 1000,
-            'timeout' => 22, // seconds
+            'batch_size' => 500,
+            'timeout' => 25, // seconds
         ],
     ],
 ];
