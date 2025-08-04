@@ -25,14 +25,7 @@ USER root
 RUN chown -R www-data:www-data /var/www
 RUN git config --global --add safe.directory /var/www
 
-ENV DD_TRACE_ENABLED=true \
-    DD_AGENT_HOST=dd-agent \
-    DD_ENV=prod \
-    DD_SERVICE=laravel-rebalax \
-    DD_VERSION=1.0.0
-
-RUN curl -sSL https://github.com/DataDog/dd-trace-php/releases/latest/download/datadog-setup.php -o /tmp/dd-setup.php \
- && php /tmp/dd-setup.php --php-bin=/usr/local/bin/php --php-bin=/usr/local/sbin/php-fpm --enable-profiling=0 --enable-telemetry=1
+DD_APM_INSTRUMENTATION_LIBRARIES=php:1 DD_APM_INSTRUMENTATION_ENABLED=docker DD_NO_AGENT_INSTALL=true bash -c "$(curl -L https://install.datadoghq.com/scripts/install_script_agent7.sh)"
 
 COPY docker/crontab/laravel /etc/cron.d/laravel
 RUN chmod 0644 /etc/cron.d/laravel
