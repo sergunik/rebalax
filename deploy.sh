@@ -20,6 +20,7 @@ cp .env.example .env
 [ -n "$GRAFANA_DB_USERNAME" ] && sed -i "s|^GRAFANA_DB_USERNAME=.*|GRAFANA_DB_USERNAME=$GRAFANA_DB_USERNAME|" .env
 [ -n "$GRAFANA_DB_PASSWORD" ] && sed -i "s|^GRAFANA_DB_PASSWORD=.*|GRAFANA_DB_PASSWORD=$GRAFANA_DB_PASSWORD|" .env
 [ -n "$GRAFANA_DB_DATABASE" ] && sed -i "s|^GRAFANA_DB_DATABASE=.*|GRAFANA_DB_DATABASE=$GRAFANA_DB_DATABASE|" .env
+[ -n "$DATADOG_API_KEY" ] && sed -i "s|^DATADOG_API_KEY=.*|DATADOG_API_KEY=$DATADOG_API_KEY|" .env
 
 cp docker/grafana/provisioning/datasources/datasource.yml.example docker/grafana/provisioning/datasources/datasource.yml
 
