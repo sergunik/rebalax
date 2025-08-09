@@ -7,10 +7,10 @@ namespace App\Repositories;
 use App\Models\TokenPrice;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-final readonly class SQLTokenPriceRepository implements TokenPriceRepository
+class SQLTokenPriceRepository implements TokenPriceRepository
 {
     public function __construct(
-        private TokenPrice $tokenPrice
+        private readonly TokenPrice $tokenPrice
     ) {}
 
     public function getLatestPriceBySymbol(string $symbol): float

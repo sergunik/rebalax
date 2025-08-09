@@ -5,21 +5,30 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Models\TokenPrice;
+use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-final readonly class CachedTokenPriceRepository implements TokenPriceRepository
+final class CachedTokenPriceRepository extends SQLTokenPriceRepository
 {
-    private array $cache;
+    private $localCache;
+
     public function __construct(
-        private TokenPrice $tokenPrice
+        private readonly TokenPrice $tokenPrice,
+        private readonly Repository $cacheRepository,
+        private readonly int $ttl,
     ) {
-        $this->cache = $this->setupCache(); //@todo: issue here in case of fresh install
+        parent::__construct($tokenPrice);
+        $this->localCache = [];
     }
 
     public function getLatestPriceBySymbol(string $symbol): float
     {
-        if (isset($this->cache[$symbol])) {
-            return (float) $this->cache[$symbol];
+        if (isset($this->localCache[$symbol])) {
+            return $this->localCache[$symbol];
+        }
+        if (isset($this->getLatestPrices()[$symbol])) {
+            $this->localCache[$symbol] = $this->getLatestPrices()[$symbol];
+            return $this->localCache[$symbol];
         }
 
         throw new ModelNotFoundException("No price found for symbol: {$symbol}");
@@ -27,25 +36,15 @@ final readonly class CachedTokenPriceRepository implements TokenPriceRepository
 
     public function getLatestPrices(): array
     {
-        return $this->cache;
-    }
+        if(!empty($this->localCache)) {
+            return $this->localCache;
+        }
+        $this->localCache = $this->cacheRepository->remember(
+            'token_prices',
+            $this->ttl,
+            fn() => parent::getLatestPrices()
+        );
 
-    /**
-     * @return array<string, float>
-     */
-    private function setupCache(): array
-    {
-        return $this->tokenPrice
-            ->select('symbol', 'price_usd')
-            ->whereIn('fetched_at', function ($query) {
-                $query->select('fetched_at')
-                    ->from('token_prices as tp2')
-                    ->orderBy('fetched_at', 'desc')
-                    ->limit(1);
-            })
-            ->get()
-            ->pluck('price_usd', 'symbol')
-            ->map(fn($price) => (float) $price)
-            ->toArray();
+        return $this->localCache;
     }
 }

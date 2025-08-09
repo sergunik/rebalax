@@ -20,6 +20,7 @@ return [
             'EUROE',
             'EURT',
         ],
+        'cache_ttl' => 300, // seconds
     ],
 
     'rebalance' => [
