@@ -16,7 +16,7 @@ Schedule::command(CreateBotWithPortfolioCommand::class)
     ->withoutOverlapping();
 
 Schedule::command(RunSimpleRebalanceCommand::class)
-    ->everyThirtyMinutes()
+    ->everyFiveMinutes()
     ->runInBackground()
     ->withoutOverlapping()
     ->when(function () {
