@@ -51,8 +51,18 @@ final readonly class MetricsService
         $counter->incBy($count, [$command]);
     }
 
-    public function recordBatchProcessed(string $command, int $batchSize, int $processedCount): void
+    public function recordBatchProcessed(string $command, int $batchOffset, int $batchSize, int $processedCount): void
     {
+        // Record batch offset
+        $batchOffsetHistogram = $this->registry->getOrRegisterHistogram(
+            self::NAMESPACE,
+            'batch_offset_distribution',
+            'Distribution of batch offsets',
+            ['command'],
+            [0, 500, 1000, 2500, 5000, 10000, 25000, 50000, 100000]
+        );
+        $batchOffsetHistogram->observe($batchOffset, [$command]);
+
         // Record batch size histogram
         $batchSizeHistogram = $this->registry->getOrRegisterHistogram(
             self::NAMESPACE,

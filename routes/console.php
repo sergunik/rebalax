@@ -11,7 +11,7 @@ Schedule::command(PriceCollectorCommand::class)
     ->withoutOverlapping();
 
 Schedule::command(CreateBotWithPortfolioCommand::class)
-    ->everyTenMinutes()
+    ->everyFiveMinutes()
     ->runInBackground()
     ->withoutOverlapping();
 

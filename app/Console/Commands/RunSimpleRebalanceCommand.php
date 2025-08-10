@@ -59,7 +59,7 @@ class RunSimpleRebalanceCommand extends Command
                 $count = $this->rebalanceService->do($batchOffset, $batchSize);
 
                 // Record batch metrics
-                $this->metricsService->recordBatchProcessed(self::COMMAND_NAME, $batchSize, $count);
+                $this->metricsService->recordBatchProcessed(self::COMMAND_NAME, $batchOffset, $batchSize, $count);
 
                 $totalCount += $count;
 
@@ -90,10 +90,8 @@ class RunSimpleRebalanceCommand extends Command
     {
         return (int) $this->cacheRepository->remember(
             'rebalance_total_portfolios_count',
-            now()->addDay(),
-            function () {
-                return Portfolio::count();
-            }
+            60 * 60 * 6, // Cache for 6 hours
+            fn() => Portfolio::count()
         );
     }
 }
