@@ -58,6 +58,7 @@ services:
       - ./docker/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
       - ./docker/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
     environment:
+      GF_INSTALL_PLUGINS: esnet-matrix-panel
       GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
       GF_LOCALE: en-US

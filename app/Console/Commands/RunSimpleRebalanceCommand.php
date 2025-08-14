@@ -59,7 +59,6 @@ class RunSimpleRebalanceCommand extends Command
                 $count = $this->rebalanceService->do($batchOffset, $batchSize);
 
                 // Record batch metrics
-                file_put_contents('test.log', "Batch processed: offset={$batchOffset}, size={$batchSize}, count={$count}\n", FILE_APPEND);
                 $this->metricsService->recordBatchProcessed(self::COMMAND_NAME, $batchOffset, $batchSize, $count);
 
                 $totalCount += $count;
