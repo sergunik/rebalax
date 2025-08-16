@@ -7,12 +7,12 @@ use Illuminate\Support\Facades\Schedule;
 
 Schedule::command(PriceCollectorCommand::class)
     ->everyFiveMinutes()
-    ->runInBackground()
+//    ->runInBackground()
     ->withoutOverlapping();
 
 Schedule::command(CreateBotWithPortfolioCommand::class)
-    ->everyFiveMinutes()
-    ->runInBackground()
+    ->everyMinute()
+//    ->runInBackground()
     ->withoutOverlapping();
 
 Schedule::command(RunSimpleRebalanceCommand::class)

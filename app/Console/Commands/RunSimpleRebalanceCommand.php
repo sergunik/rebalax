@@ -14,7 +14,6 @@ use Throwable;
 class RunSimpleRebalanceCommand extends Command
 {
     private const COMMAND_NAME = 'rebalance_simple';
-
     protected $signature = 'app:rebalance:simple';
 
     protected $description = 'Run a simple rebalance of the portfolio based on predefined rules';
@@ -31,8 +30,6 @@ class RunSimpleRebalanceCommand extends Command
     {
         $timeStart = microtime(true);
         $status = 'success';
-
-        $this->metricsService->setActiveCommand(self::COMMAND_NAME);
 
         $totalPortfolios = $this->getCachedTotalPortfoliosCount();
 
@@ -56,12 +53,12 @@ class RunSimpleRebalanceCommand extends Command
             for ($i = 0; $i < $countOfIterations; $i++) {
                 $batchOffset = $globalBatchOffset + ($i * $localBatchSize);
                 $batchSize = min($localBatchSize, $globalBatchSize * ($currentBatchIndex+1) - $batchOffset);
-                $count = $this->rebalanceService->do($batchOffset, $batchSize);
+                $this->rebalanceService->do($batchOffset, $batchSize);
 
                 // Record batch metrics
-                $this->metricsService->recordBatchProcessed(self::COMMAND_NAME, $batchOffset, $batchSize, $count);
+                $this->metricsService->recordBatchProcessed(self::COMMAND_NAME, $batchOffset, $batchSize);
 
-                $totalCount += $count;
+                $totalCount += $batchSize;
 
                 if (microtime(true) - $timeStart > config('rebalax.rebalance.simple.timeout')) {
                     $this->metricsService->recordCommandTimeout(self::COMMAND_NAME);
@@ -80,7 +77,6 @@ class RunSimpleRebalanceCommand extends Command
 
             $this->metricsService->recordCommandExecutionTime(self::COMMAND_NAME, $executionTime);
             $this->metricsService->incrementCommandExecutions(self::COMMAND_NAME, $status);
-            $this->metricsService->setActiveCommand(self::COMMAND_NAME, 0);
         }
 
         return $status === 'success' ? 0 : 1;
@@ -90,7 +86,7 @@ class RunSimpleRebalanceCommand extends Command
     {
         return (int) $this->cacheRepository->remember(
             'rebalance_total_portfolios_count',
-            60 * 60 * 6, // Cache for 6 hours
+            60 * 60 * 4, // Cache for 4 hours
             fn() => Portfolio::count()
         );
     }

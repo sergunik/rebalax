@@ -18,7 +18,7 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 0,
-    "id": 5,
+    "id": 3,
     "links": [],
     "panels": [
         {
@@ -152,6 +152,69 @@
         },
         {
             "datasource": {
+                "uid": "rebalax_prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 3,
+                "x": 6,
+                "y": 0
+            },
+            "id": 9,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "none",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": [
+                        "sum"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.1.0",
+            "targets": [
+                {
+                    "disableTextWrap": false,
+                    "editorMode": "code",
+                    "expr": "sum(increase(rebalax_command_executions_total{command=\"rebalance_simple\"}[$__rate_interval]))",
+                    "fullMetaSearch": false,
+                    "includeNullMetadata": true,
+                    "legendFormat": "__auto",
+                    "range": true,
+                    "refId": "A",
+                    "useBackend": false
+                }
+            ],
+            "title": "Executions (simple rebalance)",
+            "type": "stat"
+        },
+        {
+            "datasource": {
                 "type": "prometheus",
                 "uid": "rebalax_prometheus"
             },
@@ -188,7 +251,7 @@
             "gridPos": {
                 "h": 5,
                 "w": 9,
-                "x": 6,
+                "x": 9,
                 "y": 0
             },
             "id": 4,
@@ -217,7 +280,7 @@
                         "uid": "rebalax_prometheus"
                     },
                     "editorMode": "code",
-                    "expr": "rate(prometheus_metrics_service_command_execution_duration_seconds_sum{command=\"rebalance_simple\"}[$__rate_interval]) / rate(prometheus_metrics_service_command_execution_duration_seconds_count{command=\"rebalance_simple\"}[$__rate_interval])",
+                    "expr": "rate(rebalax_command_execution_duration_seconds_sum{command=\"rebalance_simple\"}[$__rate_interval]) / rate(rebalax_command_execution_duration_seconds_count{command=\"rebalance_simple\"}[$__rate_interval])",
                     "instant": false,
                     "legendFormat": "__auto",
                     "range": true,
@@ -305,7 +368,7 @@
                             },
                             {
                                 "color": "red",
-                                "value": 80
+                                "value": 1
                             }
                         ]
                     }
@@ -321,13 +384,13 @@
             "id": 6,
             "options": {
                 "colorMode": "value",
-                "graphMode": "area",
+                "graphMode": "none",
                 "justifyMode": "auto",
                 "orientation": "auto",
                 "percentChangeColorMode": "standard",
                 "reduceOptions": {
                     "calcs": [
-                        "lastNotNull"
+                        "sum"
                     ],
                     "fields": "",
                     "values": false
@@ -339,14 +402,85 @@
             "pluginVersion": "12.1.0",
             "targets": [
                 {
+                    "disableTextWrap": false,
                     "editorMode": "code",
-                    "expr": "increase(prometheus_metrics_service_command_timeouts_total{command=\"rebalance_simple\"}[$__rate_interval])",
+                    "expr": "sum(increase(rebalax_command_timeouts_total{command=\"rebalance_simple\"}[$__rate_interval]))",
+                    "fullMetaSearch": false,
+                    "includeNullMetadata": true,
                     "legendFormat": "__auto",
                     "range": true,
-                    "refId": "A"
+                    "refId": "A",
+                    "useBackend": false
                 }
             ],
-            "title": "Command Timeouts",
+            "title": "Timeouts",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "uid": "rebalax_prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 1
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 3,
+                "x": 6,
+                "y": 5
+            },
+            "id": 10,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "none",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": [
+                        "sum"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.1.0",
+            "targets": [
+                {
+                    "disableTextWrap": false,
+                    "editorMode": "builder",
+                    "expr": "sum(increase(rebalax_command_executions_total{command=\"rebalance_simple\", status!=\"success\"}[$__rate_interval]))",
+                    "fullMetaSearch": false,
+                    "includeNullMetadata": true,
+                    "legendFormat": "__auto",
+                    "range": true,
+                    "refId": "A",
+                    "useBackend": false
+                }
+            ],
+            "title": "Issues",
             "type": "stat"
         },
         {
@@ -412,7 +546,7 @@
             "gridPos": {
                 "h": 5,
                 "w": 9,
-                "x": 6,
+                "x": 9,
                 "y": 5
             },
             "id": 5,
@@ -421,7 +555,7 @@
                     "calcs": [],
                     "displayMode": "list",
                     "placement": "bottom",
-                    "showLegend": true
+                    "showLegend": false
                 },
                 "tooltip": {
                     "hideZeros": false,
@@ -437,7 +571,7 @@
                         "uid": "rebalax_prometheus"
                     },
                     "editorMode": "code",
-                    "expr": "increase(prometheus_metrics_service_portfolios_processed_total{command=\"rebalance_simple\"}[$__rate_interval])",
+                    "expr": "increase(rebalax_portfolios_processed_total{command=\"rebalance_simple\"}[$__rate_interval])",
                     "instant": false,
                     "legendFormat": "__auto",
                     "range": true,

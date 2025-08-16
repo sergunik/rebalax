@@ -25,6 +25,7 @@ class PortfolioFactory extends Factory
             'name' => $this->faker->words(2, true),
             'description' => $this->faker->sentence(),
             'is_active' => $this->faker->boolean(),
+            'asset_count' => $this->faker->numberBetween(2, 10),
             'rebalance_threshold_percent' => $this->faker->randomFloat(2, 1, 20),
             'last_rebalanced_at' => $this->faker->optional()->dateTime(),
         ];

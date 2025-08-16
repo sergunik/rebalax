@@ -8,7 +8,7 @@ use Prometheus\CollectorRegistry;
 
 final readonly class MetricsService
 {
-    private const NAMESPACE = 'prometheus_metrics_service';
+    private const NAMESPACE = 'rebalax';
 
     public function __construct(private CollectorRegistry $registry)
     {
@@ -51,7 +51,7 @@ final readonly class MetricsService
         $counter->incBy($count, [$command]);
     }
 
-    public function recordBatchProcessed(string $command, int $batchOffset, int $batchSize, int $processedCount): void
+    public function recordBatchProcessed(string $command, int $batchOffset, int $batchSize): void
     {
         // Record batch offset
         $batchOffsetHistogram = $this->registry->getOrRegisterHistogram(
@@ -72,28 +72,6 @@ final readonly class MetricsService
             [10, 25, 50, 100, 250, 500, 1000]
         );
         $batchSizeHistogram->observe($batchSize, [$command]);
-
-        // Record processed count per batch
-        $processedHistogram = $this->registry->getOrRegisterHistogram(
-            self::NAMESPACE,
-            'batch_processed_count_distribution',
-            'Distribution of items processed per batch',
-            ['command'],
-            [0, 10, 25, 50, 100, 250, 500, 1000]
-        );
-        $processedHistogram->observe($processedCount, [$command]);
-    }
-
-    public function setActiveCommand(string $command, int $active = 1): void
-    {
-        $gauge = $this->registry->getOrRegisterGauge(
-            self::NAMESPACE,
-            'active_commands',
-            'Currently active commands',
-            ['command']
-        );
-
-        $gauge->set($active, [$command]);
     }
 
     public function recordCommandTimeout(string $command): void

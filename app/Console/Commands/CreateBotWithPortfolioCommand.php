@@ -41,6 +41,7 @@ class CreateBotWithPortfolioCommand extends Command
         $portfolio = Portfolio::factory()->create([
             'user_id' => $this->user->id,
             'is_active' => true,
+            'asset_count' => $size,
             'rebalance_threshold_percent' => config('rebalax.rebalance.simple.threshold_percent'),
             'last_rebalanced_at' => null,
         ]);
