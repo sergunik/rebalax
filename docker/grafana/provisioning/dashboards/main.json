@@ -297,6 +297,85 @@
             },
             "fieldConfig": {
                 "defaults": {
+                    "color": {
+                        "mode": "fixed"
+                    },
+                    "decimals": 0,
+                    "mappings": [],
+                    "max": 7744,
+                    "min": 1,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            }
+                        ]
+                    },
+                    "unit": "none"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 10,
+                "w": 6,
+                "x": 18,
+                "y": 0
+            },
+            "id": 11,
+            "options": {
+                "minVizHeight": 75,
+                "minVizWidth": 75,
+                "orientation": "auto",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showThresholdLabels": false,
+                "showThresholdMarkers": true,
+                "sizing": "auto"
+            },
+            "pluginVersion": "12.1.0",
+            "targets": [
+                {
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT COUNT(*) AS unique_pairs_count\nFROM (\n    SELECT DISTINCT\n        LEAST(a1.token_symbol, a2.token_symbol) || '_' || GREATEST(a1.token_symbol, a2.token_symbol) AS asset_pair\n    FROM portfolios p\n    JOIN portfolio_assets a1 ON a1.portfolio_id = p.id\n    JOIN portfolio_assets a2 ON a2.portfolio_id = p.id AND a1.id < a2.id\n    WHERE p.asset_count = 2\n) sub;",
+                    "refId": "A",
+                    "sql": {
+                        "columns": [
+                            {
+                                "parameters": [],
+                                "type": "function"
+                            }
+                        ],
+                        "groupBy": [
+                            {
+                                "property": {
+                                    "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                        ],
+                        "limit": 50
+                    }
+                }
+            ],
+            "title": "Possible pairs",
+            "type": "gauge"
+        },
+        {
+            "datasource": {
+                "type": "postgres",
+                "uid": "rebalax_postgres_db"
+            },
+            "fieldConfig": {
+                "defaults": {
                     "mappings": [],
                     "thresholds": {
                         "mode": "absolute",
@@ -620,7 +699,7 @@
             },
             "gridPos": {
                 "h": 39,
-                "w": 21,
+                "w": 24,
                 "x": 0,
                 "y": 10
             },
@@ -692,5 +771,5 @@
     "timezone": "browser",
     "title": "Main",
     "uid": "7978f824-440a-4095-9ba4-fddd4b471ca9",
-    "version": 2
+    "version": 3
 }
