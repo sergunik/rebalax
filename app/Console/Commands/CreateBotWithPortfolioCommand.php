@@ -55,17 +55,16 @@ class CreateBotWithPortfolioCommand extends Command
 
         // Find unique pairs of assets
         $existingPairs = $this->getCachedExistingPairs();
-        for ($i = 0; $i < 100; $i++) {
-            $tokenA = $this->getRandomToken();
+        $tokenA = $this->getRandomToken();
+        $iterations = count($this->tokens) - 1;
+        for ($i = 0; $i <  $iterations; $i++) {
             $tokenB = $this->getRandomToken();
             $pairKey = sprintf('%s_%s', $tokenA['symbol'], $tokenB['symbol']);
-            $this->refreshAllTokens();
-
-            // Ensure the pair is unique and not already existing
             if (!in_array($pairKey, $existingPairs)) {
                 break;
             }
         }
+        $this->refreshAllTokens();
 
         // Create an assets collection for the portfolio
         $assets = [];
