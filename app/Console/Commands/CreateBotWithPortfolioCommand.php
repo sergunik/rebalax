@@ -33,7 +33,7 @@ class CreateBotWithPortfolioCommand extends Command
         $this->user = User::factory()->create();
 
         $this->createPortfolioForPair();
-        for( $i = 3; $i <= 10; $i++) {
+        for( $i = 3; $i <= 5; $i++) {
             $this->createPortfolioForSize($i);
         }
 
@@ -140,7 +140,7 @@ class CreateBotWithPortfolioCommand extends Command
     {
         return $this->cacheRepository->remember(
             'create_bot_with_portfolio_existing_pairs',
-            60 * 30, // Cache for 30 minutes
+            60 * 10, // Cache for 10 minutes
             function () {
                 return DB::select("
                     SELECT DISTINCT
