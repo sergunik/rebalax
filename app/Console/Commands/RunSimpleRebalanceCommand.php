@@ -38,7 +38,7 @@ class RunSimpleRebalanceCommand extends Command
             return 0;
         }
 
-        $runsPerHour = 12;
+        $runsPerHour = 60 / 2; // Every 2 minutes
 
         $currentMinute = (int) date('i');
         $currentBatchIndex = intdiv($currentMinute, 5);

@@ -57,7 +57,7 @@ class CreateBotWithPortfolioCommand extends Command
         $existingPairs = $this->getCachedExistingPairs();
         $tokenA = $this->getRandomToken();
         $iterations = count($this->tokens) - 1;
-        for ($i = 0; $i <  $iterations; $i++) {
+        for ($i = 0; $i < $iterations; $i++) {
             $tokenB = $this->getRandomToken();
             $pairKey = sprintf('%s_%s', $tokenA['symbol'], $tokenB['symbol']);
             if (!in_array($pairKey, $existingPairs)) {

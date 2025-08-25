@@ -302,7 +302,7 @@
                     },
                     "decimals": 0,
                     "mappings": [],
-                    "max": 7744,
+                    "max": 3872,
                     "min": 1,
                     "thresholds": {
                         "mode": "absolute",
