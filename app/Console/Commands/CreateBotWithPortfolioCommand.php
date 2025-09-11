@@ -30,7 +30,10 @@ class CreateBotWithPortfolioCommand extends Command
 
     public function handle()
     {
-        $this->user = User::factory()->create();
+        $this->user = User::inRandomOrder()->first();
+        if (!$this->user) {
+            $this->user = User::factory()->create();
+        }
 
         $this->createPortfolioForPair();
         for( $i = 3; $i <= 5; $i++) {
