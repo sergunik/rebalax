@@ -15,10 +15,30 @@ readonly class PortfolioAnalyzer
 
     public function for(Portfolio $portfolio): PortfolioAnalysisDto
     {
-        $totalValueUsd = $portfolio->assets->reduce(function ($carry, $asset) {
-            $tokenPrice = $this->tokenPriceRepository->getLatestPriceBySymbol($asset->token_symbol);
-            return $carry + ($asset->quantity * $tokenPrice);
-        }, 0.0);
+        try {
+            $totalValueUsd = $portfolio->assets->reduce(function ($carry, $asset) {
+                $tokenPrice = $this->tokenPriceRepository->getLatestPriceBySymbol($asset->token_symbol);
+                return $carry + ($asset->quantity * $tokenPrice);
+            }, 0.0);
+        } catch (\Throwable $exception) {
+            return new PortfolioAnalysisDto(
+                portfolioId: $portfolio->id,
+                totalValueUsd: 0.0,
+                threshold: (float) $portfolio->rebalance_threshold_percent,
+                assets: collect([new RebalanceAssetDto(
+                    tokenSymbol: '',
+                    currentUsdValue: 0.0,
+                    targetUsdValue: 0.0,
+                    currentPercent: 0.0,
+                    targetPercent: 0.0,
+                    differencePercent: 0.0,
+                    priceUsd: 0.0,
+                    quantityDelta: 0.0,
+                    quantityBefore: 0.0,
+                    quantityAfter: 0.0,
+                )])
+            );
+        }
 
         $assetCollection = $portfolio->assets->map(function ($asset) use ($totalValueUsd) {
             $tokenPrice = $this->tokenPriceRepository->getLatestPriceBySymbol($asset->token_symbol);
