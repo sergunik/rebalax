@@ -8,6 +8,7 @@ use App\DTOs\RebalanceAssetDto;
 use App\DTOs\PortfolioAnalysisDto;
 use App\Models\Portfolio;
 use App\Repositories\TokenPriceRepository;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 readonly class PortfolioAnalyzer
 {
@@ -20,7 +21,10 @@ readonly class PortfolioAnalyzer
                 $tokenPrice = $this->tokenPriceRepository->getLatestPriceBySymbol($asset->token_symbol);
                 return $carry + ($asset->quantity * $tokenPrice);
             }, 0.0);
-        } catch (\Throwable $exception) {
+        } catch (ModelNotFoundException $e) {
+            $portfolio->is_active = false;
+            $portfolio->save();
+
             return new PortfolioAnalysisDto(
                 portfolioId: $portfolio->id,
                 totalValueUsd: 0.0,
