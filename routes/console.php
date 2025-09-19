@@ -10,10 +10,10 @@ Schedule::command(PriceCollectorCommand::class)
 //    ->runInBackground()
     ->withoutOverlapping();
 
-Schedule::command(CreateBotWithPortfolioCommand::class)
-    ->everyMinute()
-//    ->runInBackground()
-    ->withoutOverlapping();
+//Schedule::command(CreateBotWithPortfolioCommand::class)
+//    ->everyMinute()
+////    ->runInBackground()
+//    ->withoutOverlapping();
 
 Schedule::command(RunSimpleRebalanceCommand::class)
     ->everyTwoMinutes()
