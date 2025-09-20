@@ -16,7 +16,7 @@ Schedule::command(PriceCollectorCommand::class)
 //    ->withoutOverlapping();
 
 Schedule::command(RunSimpleRebalanceCommand::class)
-    ->everyTenMinutes()
+    ->everyTwoMinutes()
     ->runInBackground()
     ->withoutOverlapping()
     ->when(function () {

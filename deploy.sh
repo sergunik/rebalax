@@ -37,3 +37,4 @@ docker exec rebalax-app php artisan cache:clear
 docker exec rebalax-app php artisan route:clear
 docker exec rebalax-app php artisan view:clear
 docker exec rebalax-app php artisan optimize
+docker exec rebalax-app php artisan horizon:terminate
