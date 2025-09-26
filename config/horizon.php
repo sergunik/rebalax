@@ -206,7 +206,7 @@ return [
                 'queue'        => ['default'],
                 'balance'      => 'auto',
                 'minProcesses' => 1,
-                'maxProcesses' => 3,
+                'maxProcesses' => 2,
                 'tries'        => 3,
             ],
         ],
