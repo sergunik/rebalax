@@ -13,11 +13,15 @@ class Portfolio extends Model
 {
     use HasFactory;
 
+    public const STATUS_OK = 1;
+    public const STATUS_INACTIVE_ASSETS = 2;
+
     protected $fillable = [
         'user_id',
         'name',
         'description',
         'is_active',
+        'status',
         'rebalance_threshold_percent',
         'last_rebalanced_at',
     ];

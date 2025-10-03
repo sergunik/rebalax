@@ -8,7 +8,6 @@ use App\Models\Portfolio;
 use App\Models\PortfolioAsset;
 use App\Models\TokenPrice;
 use App\Services\SimpleRebalanceService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -35,10 +34,13 @@ class SimpleRebalanceServiceTest extends TestCase
             'token_symbol' => 'ETH',
         ]);
 
-        $this->expectException(ModelNotFoundException::class);
-
         $service = app(SimpleRebalanceService::class);
         $service->do(0, 100);
+
+        $this->assertDatabaseHas('portfolios', [
+            'id' => $portfolio->id,
+            'is_active' => false,
+        ]);
     }
 
     public function test_rebalance_needed(): void
@@ -46,6 +48,8 @@ class SimpleRebalanceServiceTest extends TestCase
         $portfolio = Portfolio::factory()->create([
             'is_active' => true,
         ]);
+
+        $now = now();
 
         PortfolioAsset::factory()->create([
             'portfolio_id' => $portfolio->id,
@@ -64,13 +68,13 @@ class SimpleRebalanceServiceTest extends TestCase
             'symbol' => 'BTC',
             'pair' => 'BTC_USD',
             'price_usd' => 100000.0,
-            'fetched_at' => now(),
+            'fetched_at' => $now,
         ]);
         TokenPrice::factory()->create([
             'symbol' => 'ETH',
             'pair' => 'ETH_USD',
             'price_usd' => 2000.0,
-            'fetched_at' => now(),
+            'fetched_at' => $now,
         ]);
 
         $service = app(SimpleRebalanceService::class);
@@ -78,7 +82,7 @@ class SimpleRebalanceServiceTest extends TestCase
 
         $this->assertDatabaseHas('portfolios', [
             'id' => $portfolio->id,
-            'last_rebalanced_at' => now(),
+            'last_rebalanced_at' => $now,
         ]);
         $this->assertDatabaseHas('portfolio_assets', [
             'portfolio_id' => $portfolio->id,
