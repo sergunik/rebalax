@@ -24,12 +24,15 @@ class DeleteInactivePortfoliosCommand extends Command
 
         $this->info('DeleteInactivePortfoliosCommand started');
         while (true) {
-            $count = Portfolio::where('is_active', false)->count();
+            $count = Portfolio::where('is_active', false)
+                ->where('status', Portfolio::STATUS_INACTIVE_ASSETS)
+                ->count();
             if ($count <= 0) {
                 break;
             }
 
             Portfolio::where('is_active', false)
+                ->where('status', Portfolio::STATUS_INACTIVE_ASSETS)
                 ->orderBy('created_at')
                 ->limit($batchSize)
                 ->delete();
