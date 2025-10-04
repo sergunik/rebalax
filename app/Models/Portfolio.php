@@ -15,6 +15,7 @@ class Portfolio extends Model
 
     public const STATUS_OK = 1;
     public const STATUS_INACTIVE_ASSETS = 2;
+    public const STATUS_WAITING_FOR_RERUN = 3;
 
     protected $fillable = [
         'user_id',

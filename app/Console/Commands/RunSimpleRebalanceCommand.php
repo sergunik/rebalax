@@ -87,7 +87,7 @@ class RunSimpleRebalanceCommand extends Command
         return (int) $this->cacheRepository->remember(
             'rebalance_total_portfolios_count',
             60 * 60 * 4, // Cache for 4 hours
-            fn() => Portfolio::count()
+            fn() => Portfolio::where('is_active', true)->count()
         );
     }
 }

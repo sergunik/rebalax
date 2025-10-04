@@ -10,17 +10,30 @@ use App\Models\Portfolio;
 use App\Repositories\TokenPriceRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-readonly class PortfolioAnalyzer
+class PortfolioAnalyzer
 {
-    public function __construct(private TokenPriceRepository $tokenPriceRepository) {}
+    private array $prices = [];
+
+    public function __construct(private readonly TokenPriceRepository $tokenPriceRepository) {}
+
+    public function withPrice(string $symbol, float $priceUsd): self
+    {
+        $this->prices[$symbol] = $priceUsd;
+        return $this;
+    }
+
+    public function resetPrices(): self
+    {
+        $this->prices = [];
+        return $this;
+    }
 
     public function for(Portfolio $portfolio): PortfolioAnalysisDto
     {
         try {
-            $totalValueUsd = $portfolio->assets->reduce(function ($carry, $asset) {
-                $tokenPrice = $this->tokenPriceRepository->getLatestPriceBySymbol($asset->token_symbol);
-                return $carry + ($asset->quantity * $tokenPrice);
-            }, 0.0);
+            $totalValueUsd = $portfolio->assets->sum(function ($asset) {
+                return $asset->quantity * $this->getPriceForSymbol($asset->token_symbol);
+            });
         } catch (ModelNotFoundException $e) {
             $portfolio->is_active = false;
             $portfolio->save();
@@ -45,7 +58,7 @@ readonly class PortfolioAnalyzer
         }
 
         $assetCollection = $portfolio->assets->map(function ($asset) use ($totalValueUsd) {
-            $tokenPrice = $this->tokenPriceRepository->getLatestPriceBySymbol($asset->token_symbol);
+            $tokenPrice = $this->getPriceForSymbol($asset->token_symbol);
             $currentValueUsd = $asset->quantity * $tokenPrice;
             $currentAllocationPercent = ($currentValueUsd / $totalValueUsd) * 100;
             $targetUsdValue = $asset->target_allocation_percent * $totalValueUsd / 100;
@@ -70,5 +83,14 @@ readonly class PortfolioAnalyzer
             threshold: (float) $portfolio->rebalance_threshold_percent,
             assets: $assetCollection
         );
+    }
+
+    private function getPriceForSymbol(string $symbol): float
+    {
+        if (isset($this->prices[$symbol])) {
+            return $this->prices[$symbol];
+        }
+
+        return $this->tokenPriceRepository->getLatestPriceBySymbol($symbol);
     }
 }

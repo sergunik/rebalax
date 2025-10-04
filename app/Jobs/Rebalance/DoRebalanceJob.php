@@ -6,16 +6,22 @@ namespace App\Jobs\Rebalance;
 
 use App\DTOs\PortfolioAnalysisDto;
 use App\Models\Portfolio;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
-class DoRebalanceJob implements ShouldQueue
+class DoRebalanceJob implements ShouldQueue, ShouldBeUnique
 {
     use Queueable;
 
     public function __construct(
         public readonly PortfolioAnalysisDto $dto
     ) {
+    }
+
+    public function uniqueId(): string
+    {
+        return (string)$this->dto->portfolioId;
     }
 
     /**
