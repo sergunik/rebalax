@@ -44,6 +44,7 @@ class DoRebalanceJob implements ShouldQueue, ShouldBeUnique
         $portfolio->save();
 
         PortfolioRebalancedJob::dispatch($this->dto)
+            ->onQueue('rebalance_logs')
             ->delay(now()->addSeconds(5));
     }
 }

@@ -16,8 +16,6 @@ class PortfolioRebalancedJob implements ShouldQueue
 {
     use Queueable;
 
-    public $queue = 'rebalance_logs';
-
     public function __construct(
         public readonly PortfolioAnalysisDto $dto
     ) {
