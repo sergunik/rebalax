@@ -1,0 +1,136 @@
+{
+    "annotations": {
+        "list": [
+            {
+                "builtIn": 1,
+                "datasource": {
+                    "type": "grafana",
+                    "uid": "-- Grafana --"
+                },
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "type": "dashboard"
+            }
+        ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 4,
+    "links": [],
+    "panels": [
+        {
+            "datasource": {
+                "type": "postgres",
+                "uid": "rebalax_postgres_db"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [
+                        {
+                            "options": {
+                                "0": {
+                                    "color": "text",
+                                    "index": 1
+                                },
+                                "1": {
+                                    "color": "semi-dark-green",
+                                    "index": 0
+                                }
+                            },
+                            "type": "value"
+                        }
+                    ],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 39,
+                "w": 23,
+                "x": 0,
+                "y": 0
+            },
+            "id": 2,
+            "options": {
+                "addUrl": false,
+                "cellPadding": 5,
+                "cellSize": 15,
+                "defaultColor": "text",
+                "inputList": false,
+                "legendType": "categorical",
+                "nullColor": "#00000000",
+                "showLegend": false,
+                "sourceField": "token_x",
+                "sourceText": "From",
+                "targetField": "token_y",
+                "targetText": "To",
+                "txtLength": 10,
+                "txtSize": 10,
+                "valueField": "paired",
+                "valueText": "Value"
+            },
+            "pluginVersion": "2.0.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "postgres",
+                        "uid": "rebalax_postgres_db"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "WITH paired_tokens AS (\n  SELECT\n    t1.token_symbol AS token_x,\n    t2.token_symbol AS token_y,\n    1 AS paired\n  FROM\n    public.portfolio_assets AS t1\n    JOIN public.portfolio_assets AS t2 ON t1.portfolio_id = t2.portfolio_id\n    AND t1.id < t2.id\n  WHERE\n    t1.portfolio_id IN (\n      SELECT portfolio_id\n      FROM public.portfolio_assets\n      GROUP BY portfolio_id\n      HAVING COUNT(*) = 2\n    )\n),\nall_tokens AS (\n  SELECT DISTINCT token_symbol FROM public.portfolio_assets\n),\nall_pairs AS (\n  SELECT \n    a.token_symbol AS token_x,\n    b.token_symbol AS token_y,\n    0 AS paired\n  FROM all_tokens a\n  CROSS JOIN all_tokens b\n  WHERE a.token_symbol < b.token_symbol\n)\nSELECT \n  token_x,\n  token_y,\n  MAX(paired) AS paired\nFROM (\n  SELECT * FROM paired_tokens\n  UNION ALL\n  SELECT * FROM all_pairs\n) combined\nGROUP BY token_x, token_y\n",
+                    "refId": "A",
+                    "sql": {
+                        "columns": [
+                            {
+                                "parameters": [],
+                                "type": "function"
+                            }
+                        ],
+                        "groupBy": [
+                            {
+                                "property": {
+                                    "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                        ],
+                        "limit": 50
+                    }
+                }
+            ],
+            "title": "Pairs",
+            "type": "esnet-matrix-panel"
+        }
+    ],
+    "preload": false,
+    "schemaVersion": 41,
+    "tags": [],
+    "templating": {
+        "list": []
+    },
+    "time": {
+        "from": "now-6h",
+        "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "Matrix",
+    "uid": "0ec46b27-4731-4bd2-9de4-0789e762971e",
+    "version": 2
+}
