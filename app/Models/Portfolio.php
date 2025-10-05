@@ -19,8 +19,6 @@ class Portfolio extends Model
 
     protected $fillable = [
         'user_id',
-        'name',
-        'description',
         'is_active',
         'status',
         'rebalance_threshold_percent',

@@ -41,6 +41,11 @@ class ReRunSimpleRebalanceCommandTest extends TestCase
 
         TokenPrice::factory()->create([
             'symbol' => 'BTC',
+            'price_usd' => 100000,
+            'fetched_at' => now()->subWeeks(3),
+        ]);
+        TokenPrice::factory()->create([
+            'symbol' => 'BTC',
             'price_usd' => 30000,
             'fetched_at' => now()->subWeeks(2),
         ]);

@@ -201,12 +201,20 @@ return [
 
     'environments' => [
         'production' => [
-            'supervisor-1' => [
+            'supervisor-default' => [
                 'connection'   => 'redis',
                 'queue'        => ['default'],
                 'balance'      => 'auto',
                 'minProcesses' => 1,
-                'maxProcesses' => 10,
+                'maxProcesses' => 5,
+                'tries'        => 3,
+            ],
+            'supervisor-logs' => [
+                'connection'   => 'redis',
+                'queue'        => ['rebalance_logs'],
+                'balance'      => 'auto',
+                'minProcesses' => 1,
+                'maxProcesses' => 5,
                 'tries'        => 3,
             ],
         ],

@@ -54,12 +54,14 @@ class SimpleRebalanceServiceTest extends TestCase
         PortfolioAsset::factory()->create([
             'portfolio_id' => $portfolio->id,
             'token_symbol' => 'BTC',
+            'initial_quantity' => 1.0,
             'quantity' => 1.0,
             'target_allocation_percent' => 50.0,
         ]);
         PortfolioAsset::factory()->create([
             'portfolio_id' => $portfolio->id,
             'token_symbol' => 'ETH',
+            'initial_quantity' => 10.0,
             'quantity' => 10.0,
             'target_allocation_percent' => 50.0,
         ]);
@@ -87,6 +89,7 @@ class SimpleRebalanceServiceTest extends TestCase
         $this->assertDatabaseHas('portfolio_assets', [
             'portfolio_id' => $portfolio->id,
             'token_symbol' => 'BTC',
+            'initial_quantity' => 1.0,
             'quantity' => 0.6,
         ]);
     }
@@ -100,12 +103,14 @@ class SimpleRebalanceServiceTest extends TestCase
         PortfolioAsset::factory()->create([
             'portfolio_id' => $portfolio->id,
             'token_symbol' => 'BTC',
+            'initial_quantity' => 1.0,
             'quantity' => 1.0,
             'target_allocation_percent' => 50.0,
         ]);
         PortfolioAsset::factory()->create([
             'portfolio_id' => $portfolio->id,
             'token_symbol' => 'ETH',
+            'initial_quantity' => 10.0,
             'quantity' => 10.0,
             'target_allocation_percent' => 50.0,
         ]);

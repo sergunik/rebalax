@@ -18,6 +18,7 @@ class ReRunSimpleRebalanceCommand extends Command
 
     protected $description = 'Re-run simple rebalance for inactive portfolios waiting for rerun, simulating weekly rebalances from creation date to now.';
 
+    private float $initialAmount = 1000.0;
     public function __construct(
         private readonly PortfolioAnalyzer $analyzer,
         private readonly Dispatcher $dispatcher
@@ -37,12 +38,12 @@ class ReRunSimpleRebalanceCommand extends Command
                 return Command::SUCCESS;
             }
 
-            $this->simulateRebalances($portfolio);
-
-            $portfolio->update([
-                'is_active' => true,
-                'status' => Portfolio::STATUS_OK,
-            ]);
+            if($this->simulateRebalances($portfolio)) {
+                $portfolio->update([
+                    'is_active' => true,
+                    'status' => Portfolio::STATUS_OK,
+                ]);
+            }
         }
 
         return Command::SUCCESS;
@@ -57,13 +58,33 @@ class ReRunSimpleRebalanceCommand extends Command
             ->first();
     }
 
-    private function simulateRebalances(Portfolio $portfolio): void
+    private function simulateRebalances(Portfolio $portfolio): bool
     {
         $rebalanceTime = $portfolio->created_at->copy();
 
+        unset($asset);
+        foreach ($portfolio->assets as &$asset) {
+            $price = $this->getSymbolPrice($asset->token_symbol, $rebalanceTime);
+            if ($price === null) {
+                $portfolio->update([
+                    'is_active' => false,
+                    'status' => Portfolio::STATUS_INACTIVE_ASSETS,
+                ]);
+                return false;
+            }
+
+            $q = round(
+                ($this->initialAmount * ($asset->target_allocation_percent / 100.0)) / $price,
+                18
+            );
+            $asset->update([
+                'initial_quantity' => $q,
+                'quantity' => $q,
+            ]);
+        }
+
         while (true) {
             $rebalanceTime->addWeek();
-            dump("Simulating rebalance at {$rebalanceTime->toDateTimeString()}");
 
             if ($rebalanceTime->greaterThan(now())) {
                 break;
@@ -71,10 +92,15 @@ class ReRunSimpleRebalanceCommand extends Command
 
             $this->analyzer->resetPrices();
 
+            unset($asset);
             foreach ($portfolio->assets as $asset) {
                 $price = $this->getSymbolPrice($asset->token_symbol, $rebalanceTime);
-                if ($price === Command::FAILURE) {
-                    continue;
+                if ($price === null) {
+                    $portfolio->update([
+                        'is_active' => false,
+                        'status' => Portfolio::STATUS_INACTIVE_ASSETS,
+                    ]);
+                    return false;
                 }
                 $this->analyzer->withPrice($asset->token_symbol, $price);
             }
@@ -82,19 +108,15 @@ class ReRunSimpleRebalanceCommand extends Command
             $analysisDto = $this->analyzer->for($portfolio);
 
             if ($analysisDto->isRebalanceNeeded()) {
-                $this->dispatchRebalance($portfolio->id, $analysisDto, $rebalanceTime);
+                $this->dispatcher->dispatch(new DoRebalanceJob($analysisDto));
                 break;
             }
         }
+
+        return true;
     }
 
-    private function dispatchRebalance(int $portfolioId, $analysisDto, $rebalanceTime): void
-    {
-        $this->dispatcher->dispatch(new DoRebalanceJob($analysisDto));
-        dump("Dispatched DoRebalanceJob for portfolio ID {$portfolioId} at {$rebalanceTime->toDateTimeString()}");
-    }
-
-    private function getSymbolPrice(string $symbol, mixed $at): float|int
+    private function getSymbolPrice(string $symbol, mixed $at): ?float
     {
         $priceRecord = TokenPrice::query()
             ->where('symbol', $symbol)
@@ -104,7 +126,7 @@ class ReRunSimpleRebalanceCommand extends Command
 
         if (! $priceRecord) {
             $this->error("No price record found for token {$symbol} before {$at}");
-            return Command::FAILURE;
+            return null;
         }
 
         return (float) $priceRecord->price_usd;

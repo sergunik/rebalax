@@ -24,7 +24,8 @@ class PortfolioAssetFactory extends Factory
             'portfolio_id' => Portfolio::factory()->create()->id,
             'token_symbol' => $this->faker->randomElement(['BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'ADA']),
             'target_allocation_percent' => $this->faker->randomFloat(1, 0, 100),
-            'quantity' => $this->faker->randomFloat(18, 0.1, 1000),
+            'initial_quantity' => $quantity = $this->faker->randomFloat(18, 0.1, 1000),
+            'quantity' => $quantity,
             'created_at' => $this->faker->dateTimeThisYear(),
             'updated_at' => $this->faker->dateTimeThisYear(),
         ];

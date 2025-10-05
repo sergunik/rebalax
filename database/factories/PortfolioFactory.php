@@ -22,8 +22,6 @@ class PortfolioFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'name' => $this->faker->words(2, true),
-            'description' => $this->faker->sentence(),
             'is_active' => $this->faker->boolean(),
             'status' => Portfolio::STATUS_OK,
             'asset_count' => $this->faker->numberBetween(2, 10),

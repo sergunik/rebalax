@@ -20,7 +20,10 @@ class DeleteInactivePortfoliosCommandTest extends TestCase
     public function test_it_deletes_inactive_portfolios_and_leaves_active_ones()
     {
         // Arrange
-        Portfolio::factory()->count(3)->create(['is_active' => false]);
+        Portfolio::factory()->count(3)->create([
+            'is_active' => false,
+            'status' => Portfolio::STATUS_INACTIVE_ASSETS,
+        ]);
         Portfolio::factory()->count(2)->create(['is_active' => true]);
 
         $this->assertDatabaseCount('portfolios', 5);

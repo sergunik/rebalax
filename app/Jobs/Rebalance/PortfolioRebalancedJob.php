@@ -10,10 +10,13 @@ use App\Models\RebalanceLog;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
+use Str;
 
 class PortfolioRebalancedJob implements ShouldQueue
 {
     use Queueable;
+
+    public $queue = 'rebalance_logs';
 
     public function __construct(
         public readonly PortfolioAnalysisDto $dto
@@ -22,14 +25,17 @@ class PortfolioRebalancedJob implements ShouldQueue
 
     public function handle(): void
     {
+        $rebalanceUuid = (string) Str::uuid();
+
         Log::info('Portfolio has been rebalanced', [
             'portfolio_id' => $this->dto->portfolioId,
+            'rebalance_uuid' => $rebalanceUuid,
             'timestamp' => now(),
         ]);
 
         $insertData = [];
         foreach ($this->dto->assets as $asset) {
-            $insertData[] = $this->prepareLogData($asset);
+            $insertData[] = $this->prepareLogData($asset, $rebalanceUuid);
         }
         if (!empty($insertData)) {
             RebalanceLog::insert($insertData);
@@ -37,9 +43,10 @@ class PortfolioRebalancedJob implements ShouldQueue
     }
 
 
-    private function prepareLogData(RebalanceAssetDto $asset): array
+    private function prepareLogData(RebalanceAssetDto $asset, string $uuid): array
     {
         return [
+            'rebalance_uuid' => $uuid,
             'portfolio_id' => $this->dto->portfolioId,
             'token_symbol' => $asset->tokenSymbol,
             'quantity_before' => (float)$asset->quantityBefore,

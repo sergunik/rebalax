@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $id
+ * @property string $rebalance_uuid The UUID of the rebalance operation
  * @property int $portfolio_id The ID of the portfolio
  * @property string $token_symbol The symbol of the token (e.g., BTC, ETH)
  * @property float $quantity_before The quantity of the token before rebalancing
@@ -24,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class RebalanceLog extends Model
 {
     protected $fillable = [
+        'rebalance_uuid',
         'portfolio_id',
         'token_symbol',
         'quantity_before',

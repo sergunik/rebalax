@@ -22,12 +22,14 @@ class PortfolioAnalyzerIntegrationTest extends TestCase
         PortfolioAsset::factory()->create([
             'portfolio_id' => $portfolio->id,
             'token_symbol' => 'BTC',
+            'initial_quantity' => 2.0,
             'quantity' => 2.0,
             'target_allocation_percent' => 60.0,
         ]);
         PortfolioAsset::factory()->create([
             'portfolio_id' => $portfolio->id,
             'token_symbol' => 'ETH',
+            'initial_quantity' => 10.0,
             'quantity' => 10.0,
             'target_allocation_percent' => 40.0,
         ]);
@@ -80,12 +82,14 @@ class PortfolioAnalyzerIntegrationTest extends TestCase
         PortfolioAsset::factory()->create([
             'portfolio_id' => $portfolio->id,
             'token_symbol' => 'BTC',
+            'initial_quantity' => 2.0,
             'quantity' => 2.0,
             'target_allocation_percent' => 50.0,
         ]);
         PortfolioAsset::factory()->create([
             'portfolio_id' => $portfolio->id,
             'token_symbol' => 'ETH',
+            'initial_quantity' => 100.0,
             'quantity' => 100.0,
             'target_allocation_percent' => 50.0,
         ]);

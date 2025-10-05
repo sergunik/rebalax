@@ -16,11 +16,13 @@ class PortfolioAsset extends Model
         'portfolio_id',
         'token_symbol',
         'target_allocation_percent',
+        'initial_quantity',
         'quantity',
     ];
 
     protected $casts = [
         'target_allocation_percent' => 'decimal:4',
+        'initial_quantity' => 'decimal:18',
         'quantity' => 'decimal:18',
     ];
 
