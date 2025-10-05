@@ -19,6 +19,6 @@ Schedule::command(RunSimpleRebalanceCommand::class)
     });
 
 Schedule::command(ReRunSimpleRebalanceCommand::class)
-    ->everyFiveMinutes()
+    ->everyTwoMinutes()
     ->runInBackground()
     ->withoutOverlapping();
