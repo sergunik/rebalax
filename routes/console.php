@@ -10,15 +10,15 @@ Schedule::command(PriceCollectorCommand::class)
 //    ->runInBackground()
     ->withoutOverlapping();
 
-//Schedule::command(RunSimpleRebalanceCommand::class)
-//    ->everyTwoMinutes()
-//    ->runInBackground()
-//    ->withoutOverlapping()
-//    ->when(function () {
-//        return config('rebalax.rebalance.simple.enabled', false);
-//    });
-//
-//Schedule::command(ReRunSimpleRebalanceCommand::class)
-//    ->everyFiveMinutes()
-//    ->runInBackground()
-//    ->withoutOverlapping();
+Schedule::command(RunSimpleRebalanceCommand::class)
+    ->hourlyAt(13)
+    ->runInBackground()
+    ->withoutOverlapping()
+    ->when(function () {
+        return config('rebalax.rebalance.simple.enabled', false);
+    });
+
+Schedule::command(ReRunSimpleRebalanceCommand::class)
+    ->everyFiveMinutes()
+    ->runInBackground()
+    ->withoutOverlapping();

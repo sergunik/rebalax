@@ -38,12 +38,10 @@ class RunSimpleRebalanceCommand extends Command
             return 0;
         }
 
-        $runsPerHour = 60 / 2; // Every 2 minutes
+        $currentHour = (int) date('G') + 1; // +1 to avoid division by zero
 
-        $currentMinute = (int) date('i');
-        $currentBatchIndex = intdiv($currentMinute, 5);
-
-        $globalBatchSize = (int) ceil($totalPortfolios / $runsPerHour);
+        $globalBatchSize = (int) ceil($totalPortfolios / $currentHour);
+        $currentBatchIndex = $currentHour - 1;
         $globalBatchOffset = $globalBatchSize * $currentBatchIndex;
         $countOfIterations = (int) ceil($globalBatchSize / config('rebalax.rebalance.simple.batch_size'));
         $localBatchSize = min($globalBatchSize, config('rebalax.rebalance.simple.batch_size'));
@@ -86,7 +84,7 @@ class RunSimpleRebalanceCommand extends Command
     {
         return (int) $this->cacheRepository->remember(
             'rebalance_total_portfolios_count',
-            60 * 60 * 4, // Cache for 4 hours
+            60 * 60 * 12, // Cache for 12 hours
             fn() => Portfolio::where('is_active', true)->count()
         );
     }
