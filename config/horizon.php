@@ -184,7 +184,7 @@ return [
     */
 
     'defaults' => [
-        'supervisor-1' => [
+        'supervisor-default' => [
             'connection' => 'redis',
             'queue' => ['default'],
             'balance' => 'auto',
@@ -206,7 +206,7 @@ return [
                 'queue'        => ['default'],
                 'balance'      => 'auto',
                 'minProcesses' => 1,
-                'maxProcesses' => 2,
+                'maxProcesses' => 3,
                 'tries'        => 3,
             ],
             'supervisor-logs' => [
@@ -214,14 +214,14 @@ return [
                 'queue'        => ['rebalance_logs'],
                 'balance'      => 'auto',
                 'minProcesses' => 1,
-                'maxProcesses' => 2,
+                'maxProcesses' => 3,
                 'tries'        => 3,
             ],
         ],
 
         'local' => [
-            'supervisor-1' => [
-                'maxProcesses' => 3,
+            'supervisor-default' => [
+                'maxProcesses' => 1,
             ],
         ],
     ],
