@@ -18,7 +18,7 @@ Schedule::command(RunSimpleRebalanceCommand::class)
         return config('rebalax.rebalance.simple.enabled', false);
     });
 
-Schedule::command(ReRunSimpleRebalanceCommand::class, ['--batch' => 1000])
+Schedule::command(ReRunSimpleRebalanceCommand::class, ['--batch' => 5000])
     ->everyTwoMinutes()
     ->runInBackground()
     ->withoutOverlapping();
