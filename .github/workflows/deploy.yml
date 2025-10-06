@@ -69,7 +69,7 @@ jobs:
             docker volume prune -f
             docker image prune -a -f
             rm -rf ~/rebalax/storage/logs/*.log
-            docker exec rebalax-app chmod -R 755 storage
+            docker exec rebalax-app chmod -R 777 storage
 
       - name: Clear Maintenance Mode
         uses: appleboy/ssh-action@v0.1.10
