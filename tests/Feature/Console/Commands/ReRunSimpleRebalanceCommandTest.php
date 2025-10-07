@@ -1,6 +1,6 @@
 <?php
 
-namespace Feature\Console\Commands;
+namespace Tests\Feature\Console\Commands;
 
 use App\DTOs\PortfolioAnalysisDto;
 use App\Jobs\Rebalance\DoRebalanceJob;
