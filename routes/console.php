@@ -1,7 +1,6 @@
 <?php
 
 use App\Console\Commands\PriceCollectorCommand;
-use App\Console\Commands\ReRunSimpleRebalanceCommand;
 use App\Console\Commands\RunSimpleRebalanceCommand;
 use Illuminate\Support\Facades\Schedule;
 
@@ -17,8 +16,3 @@ Schedule::command(RunSimpleRebalanceCommand::class)
     ->when(function () {
         return config('rebalax.rebalance.simple.enabled', false);
     });
-
-Schedule::command(ReRunSimpleRebalanceCommand::class, ['--batch' => 5000])
-    ->everyTwoMinutes()
-    ->runInBackground()
-    ->withoutOverlapping();

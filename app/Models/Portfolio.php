@@ -21,6 +21,7 @@ class Portfolio extends Model
         'user_id',
         'is_active',
         'status',
+        'asset_count',
         'rebalance_threshold_percent',
         'last_rebalanced_at',
     ];
