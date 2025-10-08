@@ -10,7 +10,7 @@ Schedule::command(PriceCollectorCommand::class)
     ->withoutOverlapping();
 
 Schedule::command(RunSimpleRebalanceCommand::class)
-    ->hourlyAt(13)
+    ->everyTenMinutes()
     ->runInBackground()
     ->withoutOverlapping()
     ->when(function () {

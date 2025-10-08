@@ -36,6 +36,7 @@ class PortfolioAnalyzer
             });
         } catch (ModelNotFoundException $e) {
             $portfolio->is_active = false;
+            $portfolio->status = Portfolio::STATUS_INACTIVE_ASSETS;
             $portfolio->save();
 
             return new PortfolioAnalysisDto(

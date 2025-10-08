@@ -29,63 +29,89 @@ class RunSimpleRebalanceCommand extends Command
     public function handle(): int
     {
         $timeStart = microtime(true);
+        $timeOut = config('rebalax.rebalance.simple.timeout');
+        $delay = config('rebalax.rebalance.simple.delay_between_rebalances_in_days');
         $status = 'success';
 
-        $totalPortfolios = $this->getCachedTotalPortfoliosCount();
+        $batchOffset = $this->getLastProcessedPortfolioId();
+        $batchLimit = config('rebalax.rebalance.simple.batch_size');
 
-        if ($totalPortfolios === 0) {
-            $this->info('No portfolios to process.');
-            return 0;
+        if(0 === $batchOffset) {
+            $this->info("Starting simple rebalance from the beginning.");
+            $lastRebalancedDate = $this->getLastRebalancedDate();
+            if ($lastRebalancedDate) {
+                $this->info("Last rebalanced at: " . $lastRebalancedDate);
+                if (strtotime($lastRebalancedDate) > strtotime(sprintf('-%d days', $delay))) {
+                    $this->info("Last rebalance was less than a week ago. Exiting.");
+                    return Command::SUCCESS;
+                }
+            } else {
+                $this->info("No previous rebalances found.");
+            }
+        } else {
+            $this->info("Resuming simple rebalance from portfolio ID: {$batchOffset}");
         }
 
-        $currentHour = (int) date('G') + 1; // +1 to avoid division by zero
+        while (true) {
+            if (microtime(true) - $timeStart > ($timeOut*2/3)) {
+                $executionTime = microtime(true) - $timeStart;
 
-        $globalBatchSize = (int) ceil($totalPortfolios / $currentHour);
-        $currentBatchIndex = $currentHour - 1;
-        $globalBatchOffset = $globalBatchSize * $currentBatchIndex;
-        $countOfIterations = (int) ceil($globalBatchSize / config('rebalax.rebalance.simple.batch_size'));
-        $localBatchSize = min($globalBatchSize, config('rebalax.rebalance.simple.batch_size'));
-
-        try {
-            $totalCount = 0;
-            for ($i = 0; $i < $countOfIterations; $i++) {
-                $batchOffset = $globalBatchOffset + ($i * $localBatchSize);
-                $batchSize = min($localBatchSize, $globalBatchSize * ($currentBatchIndex+1) - $batchOffset);
-                $this->rebalanceService->do($batchOffset, $batchSize);
-
-                // Record batch metrics
-                $this->metricsService->recordBatchProcessed(self::COMMAND_NAME, $batchOffset, $batchSize);
-
-                $totalCount += $batchSize;
-
-                if (microtime(true) - $timeStart > config('rebalax.rebalance.simple.timeout')) {
-                    $this->metricsService->recordCommandTimeout(self::COMMAND_NAME);
-                    break;
-                }
+                $this->metricsService->recordCommandExecutionTime(self::COMMAND_NAME, $executionTime);
+                $this->metricsService->incrementCommandExecutions(self::COMMAND_NAME, $status);
+                break;
             }
 
-            // Record total portfolios processed
-            $this->metricsService->recordPortfoliosProcessed(self::COMMAND_NAME, $totalCount);
+            try {
+                $processedCount = $this->rebalanceService->do($batchOffset, $batchLimit);
+                $this->metricsService->recordBatchProcessed(self::COMMAND_NAME, $batchOffset, $batchLimit);
+                $this->metricsService->recordPortfoliosProcessed(self::COMMAND_NAME, $processedCount);
 
-        } catch (Throwable $e) {
-            $status = 'error';
-            $this->error("Command failed: " . $e->getMessage());
-        } finally {
-            $executionTime = microtime(true) - $timeStart;
+                $batchOffset += $processedCount;
+                $this->updateLastProcessedPortfolioId($batchOffset);
 
-            $this->metricsService->recordCommandExecutionTime(self::COMMAND_NAME, $executionTime);
-            $this->metricsService->incrementCommandExecutions(self::COMMAND_NAME, $status);
+                if ($processedCount < $batchLimit) {
+                    // No more portfolios to process
+                    $this->updateLastProcessedPortfolioId(0);
+
+                    $executionTime = microtime(true) - $timeStart;
+
+                    $this->metricsService->recordCommandExecutionTime(self::COMMAND_NAME, $executionTime);
+                    $this->metricsService->incrementCommandExecutions(self::COMMAND_NAME, $status);
+                    break;
+                }
+            } catch (Throwable $e) {
+                $status = 'error';
+                $this->error("Command failed: " . $e->getMessage());
+                break;
+            }
+
+            if (microtime(true) - $timeStart > $timeOut) {
+                $this->metricsService->recordCommandTimeout(self::COMMAND_NAME);
+                break;
+            }
+
         }
 
         return $status === 'success' ? 0 : 1;
     }
 
-    private function getCachedTotalPortfoliosCount(): int
+    private function getLastProcessedPortfolioId(): int
     {
-        return (int) $this->cacheRepository->remember(
-            'rebalance_total_portfolios_count',
-            60 * 60 * 24, // Cache for 24 hours
-            fn() => Portfolio::where('is_active', true)->count()
-        );
+        return (int) $this->cacheRepository->get('rebalance_simple_last_id', 0);
+    }
+
+    private function updateLastProcessedPortfolioId(int $lastId): void
+    {
+        $this->cacheRepository->put('rebalance_simple_last_id', $lastId, 3600*24); // 1 day
+    }
+
+    private function getLastRebalancedDate(): ?string
+    {
+        $lastPortfolio = Portfolio::query()
+            ->whereNotNull('last_rebalanced_at')
+            ->orderByDesc('last_rebalanced_at')
+            ->first();
+
+        return $lastPortfolio?->last_rebalanced_at?->toDateTimeString();
     }
 }

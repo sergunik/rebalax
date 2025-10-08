@@ -28,7 +28,8 @@ return [
             'enabled' => true,
             'threshold_percent' => 7.0,
             'batch_size' => 500,
-            'timeout' => 25, // seconds
+            'timeout' => 20, // seconds
+            'delay_between_rebalances_in_days' => 1,
         ],
     ],
 ];
