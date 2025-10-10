@@ -17,6 +17,7 @@ class DoRebalanceJob implements ShouldQueue, ShouldBeUnique
     public function __construct(
         public readonly PortfolioAnalysisDto $dto
     ) {
+        $this->onQueue('rebalance_do');
     }
 
     public function uniqueId(): string
