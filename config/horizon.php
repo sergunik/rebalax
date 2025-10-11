@@ -209,14 +209,6 @@ return [
                 'maxProcesses' => 5,
                 'tries'        => 3,
             ],
-            'supervisor-rebalance' => [
-                'connection'   => 'redis',
-                'queue'        => ['rebalance_do'],
-                'balance'      => 'auto',
-                'minProcesses' => 1,
-                'maxProcesses' => 5,
-                'tries'        => 3,
-            ],
             'supervisor-logs' => [
                 'connection'   => 'redis',
                 'queue'        => ['rebalance_logs'],
