@@ -8,7 +8,6 @@ use App\Models\Portfolio;
 use App\Models\User;
 use App\Repositories\TokenPriceRepository;
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Facades\DB;
 
 class CreateBotWithPortfolioCommand extends Command
@@ -22,8 +21,7 @@ class CreateBotWithPortfolioCommand extends Command
     private float $initialAmount = 1000.0;
 
     public function __construct(
-        private readonly TokenPriceRepository $tokenPriceRepository,
-        private readonly Repository $cacheRepository,
+        private readonly TokenPriceRepository $tokenPriceRepository
     ) {
         parent::__construct();
     }
@@ -35,53 +33,13 @@ class CreateBotWithPortfolioCommand extends Command
             $this->user = User::factory()->create();
         }
 
-        $this->createPortfolioForPair();
-        for( $i = 3; $i <= 5; $i++) {
+        $this->call(RefreshPortfolioAssetsFlatCommand::class);
+
+        for( $i = 2; $i <= 7; $i++) {
             $this->createPortfolioForSize($i);
         }
 
         return self::SUCCESS;
-    }
-
-    private function createPortfolioForPair(): void
-    {
-        $size = 2;
-
-        // Create a portfolio for the user
-        $portfolio = Portfolio::factory()->create([
-            'user_id' => $this->user->id,
-            'is_active' => true,
-            'asset_count' => $size,
-            'rebalance_threshold_percent' => config('rebalax.rebalance.simple.threshold_percent'),
-            'last_rebalanced_at' => null,
-        ]);
-
-        // Find unique pairs of assets
-        $existingPairs = $this->getCachedExistingPairs();
-        $tokenA = $this->getRandomToken();
-        $iterations = count($this->tokens) - 1;
-        for ($i = 0; $i < $iterations; $i++) {
-            $tokenB = $this->getRandomToken();
-            $pairKey = sprintf('%s_%s', $tokenA['symbol'], $tokenB['symbol']);
-            if (!in_array($pairKey, $existingPairs)) {
-                break;
-            }
-        }
-        $this->refreshAllTokens();
-
-        // Create an assets collection for the portfolio
-        $assets = [];
-        foreach ([$tokenA, $tokenB] as $token) {
-            $assets[] = [
-                'token_symbol' => $token['symbol'],
-                'target_allocation_percent' => 50.0,
-                'quantity' => round(
-                    $this->initialAmount / $token['price'],
-                    18
-                ),
-            ];
-        }
-        $portfolio->assets()->createMany($assets);
     }
 
     private function createPortfolioForSize(int $size): void
@@ -97,13 +55,13 @@ class CreateBotWithPortfolioCommand extends Command
 
         // Create an assets collection for the portfolio
         $assets = [];
-        for ($i = 0; $i < $size; $i++) {
-            $token = $this->getRandomToken();
+        $tokens = $this->getRareTokens($size);
+        foreach ($tokens as $token) {
             $assets[] = [
-                'token_symbol' => $token['symbol'],
+                'token_symbol' => $token,
                 'target_allocation_percent' => 100.0 / $size,
                 'quantity' => round(
-                    $this->initialAmount / $token['price'],
+                    $this->initialAmount / $this->allTokens[$token],
                     18
                 ),
             ];
@@ -139,21 +97,54 @@ class CreateBotWithPortfolioCommand extends Command
         }
     }
 
-    private function getCachedExistingPairs(): array
+    private function getRareTokens(int $count): array
     {
-        return $this->cacheRepository->remember(
-            'create_bot_with_portfolio_existing_pairs',
-            60 * 10, // Cache for 10 minutes
-            function () {
-                return DB::select("
-                    SELECT DISTINCT
-                        LEAST(a1.token_symbol, a2.token_symbol) || '_' || GREATEST(a1.token_symbol, a2.token_symbol) AS asset_pair
-                    FROM portfolios p
-                    JOIN portfolio_assets a1 ON a1.portfolio_id = p.id
-                    JOIN portfolio_assets a2 ON a2.portfolio_id = p.id AND a1.id < a2.id
-                    WHERE p.asset_count = 2
-                ");
+        $assetList = array_map(fn($i) => 'asset_' . $i, range(1, $count));
+        $assetStr = implode(', ', $assetList);
+
+        $this->refreshAllTokens();
+        $whereAssets = [];
+        $randomTokens = [];
+        for($assetIterator = 1; $assetIterator <= $count-1; $assetIterator++) {
+            $randomToken = $this->getRandomToken();
+            $randomTokens[] = $randomToken['symbol'];
+        }
+        $restOfTokens = array_keys($this->tokens);
+        foreach ($restOfTokens as $token) {
+            $tmp = array_merge($randomTokens, [$token]);
+            sort($tmp);
+            $whereAssets[] = array_combine($assetList, $tmp);
+        }
+
+        $rows = DB::select("
+            SELECT $assetStr, COUNT(*) AS portfolio_count
+            FROM tmp_portfolio_assets_flat
+            WHERE
+                asset_count = $count
+                AND (" . implode(' OR ', array_map(fn($a) => '(' . implode(' AND ', array_map(fn($k, $v) => "$k = '$v'", array_keys($a), array_values($a))) . ')', $whereAssets)) . ")
+            GROUP BY $assetStr
+            ORDER BY portfolio_count ASC
+            LIMIT 100
+        ");
+        $existingPortfolios = collect($rows);
+
+        foreach ($whereAssets as $whereAsset) {
+            $found = $existingPortfolios->first(fn($r) =>
+                collect($whereAsset)->every(fn($v, $k) => $r->$k === $v)
+            );
+            if (!$found) {
+                $existingPortfolios->push((object)array_merge($whereAsset, [
+                    'portfolio_count' => 0,
+                ]));
             }
-        );
+
+        }
+
+        $this->refreshAllTokens();
+
+        $result = (array) $existingPortfolios->sortBy('portfolio_count')->first();
+        unset($result['portfolio_count']);
+
+        return array_values($result);
     }
 }
