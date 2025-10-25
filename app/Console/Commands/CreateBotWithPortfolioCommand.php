@@ -57,13 +57,15 @@ class CreateBotWithPortfolioCommand extends Command
         $assets = [];
         $tokens = $this->getRareTokens($size);
         foreach ($tokens as $token) {
+            $quantity = round(
+                $this->initialAmount / $this->allTokens[$token],
+                18
+            );
             $assets[] = [
                 'token_symbol' => $token,
                 'target_allocation_percent' => 100.0 / $size,
-                'quantity' => round(
-                    $this->initialAmount / $this->allTokens[$token],
-                    18
-                ),
+                'quantity' => $quantity,
+                'initial_quantity' => $quantity,
             ];
         }
         $portfolio->assets()->createMany($assets);

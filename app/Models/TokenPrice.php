@@ -24,7 +24,7 @@ class TokenPrice extends Model
         'pair',
         'price_usd',
         'fetched_at',
-        'fetch_hash'
+        'fetch_hash',
     ];
 
     protected $casts = [
