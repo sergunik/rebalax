@@ -61,6 +61,7 @@ class ExmoPriceCollector implements PriceCollector
     {
         $priceRecords = [];
         $timestamp = Carbon::now();
+        $hash = uniqid('', true);
 
         foreach ($tickerData as $pair => $data) {
             if (!$this->isValidPairData($data)) {
@@ -75,6 +76,7 @@ class ExmoPriceCollector implements PriceCollector
                     'pair' => $pair,
                     'price_usd' => $priceUsd,
                     'fetched_at' => $timestamp,
+                    'fetch_hash' => $hash,
                 ];
             }
         }

@@ -50,6 +50,7 @@ class SimpleRebalanceServiceTest extends TestCase
         ]);
 
         $now = now();
+        $hash = uniqid('', true);
 
         PortfolioAsset::factory()->create([
             'portfolio_id' => $portfolio->id,
@@ -71,12 +72,14 @@ class SimpleRebalanceServiceTest extends TestCase
             'pair' => 'BTC_USD',
             'price_usd' => 100000.0,
             'fetched_at' => $now,
+            'fetch_hash' => $hash,
         ]);
         TokenPrice::factory()->create([
             'symbol' => 'ETH',
             'pair' => 'ETH_USD',
             'price_usd' => 2000.0,
             'fetched_at' => $now,
+            'fetch_hash' => $hash,
         ]);
 
         $service = app(SimpleRebalanceService::class);
@@ -99,6 +102,8 @@ class SimpleRebalanceServiceTest extends TestCase
         $portfolio = Portfolio::factory()->create([
             'is_active' => true,
         ]);
+        $now = now();
+        $hash = uniqid('', true);
 
         PortfolioAsset::factory()->create([
             'portfolio_id' => $portfolio->id,
@@ -119,13 +124,15 @@ class SimpleRebalanceServiceTest extends TestCase
             'symbol' => 'BTC',
             'pair' => 'BTC_USD',
             'price_usd' => 100000.0,
-            'fetched_at' => now(),
+            'fetched_at' => $now,
+            'fetch_hash' => $hash,
         ]);
         TokenPrice::factory()->create([
             'symbol' => 'ETH',
             'pair' => 'ETH_USD',
             'price_usd' => 2000.0,
-            'fetched_at' => now(),
+            'fetched_at' => $now,
+            'fetch_hash' => $hash,
         ]);
 
         $service = app(SimpleRebalanceService::class);

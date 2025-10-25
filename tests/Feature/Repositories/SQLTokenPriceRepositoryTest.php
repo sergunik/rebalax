@@ -37,17 +37,27 @@ class SQLTokenPriceRepositoryTest extends TestCase
 
     public function test_get_latest_prices_returns_array()
     {
+        $timestamp = now();
         TokenPrice::create([
             'symbol' => 'BTC',
             'pair' => 'BTC_USDT',
             'price_usd' => 100.0,
-            'fetched_at' => now(),
+            'fetched_at' => $timestamp,
+            'fetch_hash' => 'hash1',
         ]);
         TokenPrice::create([
             'symbol' => 'ETH',
             'pair' => 'ETH_USDT',
             'price_usd' => 200.0,
-            'fetched_at' => now(),
+            'fetched_at' => $timestamp,
+            'fetch_hash' => 'hash1',
+        ]);
+        TokenPrice::create([
+            'symbol' => 'BTC',
+            'pair' => 'BTC_USDT',
+            'price_usd' => 100.0,
+            'fetched_at' => $timestamp->subSeconds(10),
+            'fetch_hash' => 'hash2',
         ]);
 
         $repo = new SQLTokenPriceRepository(new TokenPrice());

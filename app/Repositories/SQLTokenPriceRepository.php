@@ -31,10 +31,10 @@ class SQLTokenPriceRepository implements TokenPriceRepository
     {
         return $this->tokenPrice
             ->select('symbol', 'price_usd')
-            ->whereIn('fetched_at', function ($query) {
-                $query->select('fetched_at')
+            ->where('fetch_hash', function ($query) {
+                $query->select('fetch_hash')
                     ->from('token_prices as tp2')
-                    ->orderBy('fetched_at', 'desc')
+                    ->orderByDesc('fetched_at')
                     ->limit(1);
             })
             ->get()

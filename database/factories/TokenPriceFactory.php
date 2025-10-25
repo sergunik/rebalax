@@ -24,6 +24,7 @@ class TokenPriceFactory extends Factory
             'pair' => $this->faker->randomElement(['BTC_USDT', 'ETH_USDT', 'SOL_USDT', 'BNB_USDT', 'XRP_USDT', 'ADA_USDT']),
             'price_usd' => $this->faker->randomFloat(8, 0.01, 100000),
             'fetched_at' => $this->faker->dateTimeThisYear(),
+            'fetch_hash' => uniqid('', true),
         ];
     }
 }

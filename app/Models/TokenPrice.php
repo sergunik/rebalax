@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $pair The trading pair (e.g., BTC_USD)
  * @property float $price_usd The price of the token in USD
  * @property \Illuminate\Support\Carbon $fetched_at The timestamp when the price was fetched
+ * @property string $fetch_hash A hash to identify the fetch operation
  */
 class TokenPrice extends Model
 {
@@ -23,6 +24,7 @@ class TokenPrice extends Model
         'pair',
         'price_usd',
         'fetched_at',
+        'fetch_hash'
     ];
 
     protected $casts = [

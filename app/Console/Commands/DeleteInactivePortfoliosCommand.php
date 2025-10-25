@@ -37,10 +37,6 @@ class DeleteInactivePortfoliosCommand extends Command
                 ->limit($batchSize)
                 ->delete();
 
-            $count -= $batchSize;
-            $this->info(
-                printf("Deleted 50 inactive portfolios, remaining: %d", $count)
-            );
             sleep(1);
         }
 

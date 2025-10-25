@@ -37,11 +37,13 @@ class PortfolioAnalyzerIntegrationTest extends TestCase
             'symbol' => 'BTC',
             'price_usd' => 107000.0,
             'fetched_at' => now(),
+            'fetch_hash' => 'testhash',
         ]);
         TokenPrice::factory()->create([
             'symbol' => 'ETH',
             'price_usd' => 2500.0,
             'fetched_at' => now(),
+            'fetch_hash' => 'testhash',
         ]);
 
         $analyzer = new PortfolioAnalyzer(app(TokenPriceRepository::class));
